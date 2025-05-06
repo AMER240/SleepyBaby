@@ -28,5 +28,8 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Build and analyze with Gradle
         run: ./gradlew build sonarqube -Dsonar.projectKey=SleepyBaby -Dsonar.organization=amer240 -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SONAR_TOKEN }}
