@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="24dp"
-    android:background="#FAFAFA">
+    android:background="@color/background">
 
     <TextView
         android:id="@+id/titleTextView"
@@ -14,17 +14,18 @@
         android:layout_marginBottom="40dp"
         android:text="@string/app_name"
         android:textSize="27sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="@color/text_primary" />
 
     <Button
         android:id="@+id/addSleepButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Uyku Zamanı Ekle"
+        android:text="@string/add_sleep_time"
         android:textSize="18sp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="#3F51B5"
-        android:textColor="#FFFFFF"
+        android:backgroundTint="@color/primary"
+        android:textColor="@color/white"
         android:padding="16dp" />
 
     <Button
@@ -32,20 +33,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="#007D96"
+        android:backgroundTint="@color/accent"
         android:padding="16dp"
-        android:text="Uyanış Zamanı Ekle"
-        android:textColor="#FFFFFF"
+        android:text="@string/add_wake_time"
+        android:textColor="@color/white"
         android:textSize="18sp" />
 
     <Button
         android:id="@+id/viewScheduleButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="#513FB5"
+        android:backgroundTint="@color/secondary"
         android:padding="16dp"
-        android:text="Uyku Programını Görüntüle"
-        android:textColor="#FFFFFF"
+        android:text="@string/view_schedule"
+        android:textColor="@color/white"
         android:textSize="18sp" />
 
 </LinearLayout>

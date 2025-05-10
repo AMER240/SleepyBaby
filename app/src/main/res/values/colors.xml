@@ -2,4 +2,18 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- Ana renkler -->
+    <color name="primary">#3F51B5</color>
+    <color name="primary_dark">#303F9F</color>
+    <color name="accent">#007D96</color>
+    <color name="secondary">#513FB5</color>
+    
+    <!-- Arka plan renkleri -->
+    <color name="background">#FAFAFA</color>
+    <color name="surface">#FFFFFF</color>
+    
+    <!-- Metin renkleri -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
 </resources>
