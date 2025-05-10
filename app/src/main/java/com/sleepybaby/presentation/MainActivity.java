@@ -1,4 +1,4 @@
-package com.example.sleepybaby;
+package com.sleepybaby.presentation;
 
 import android.os.Bundle;
 
@@ -21,4 +21,4 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
     }
-}
+} 

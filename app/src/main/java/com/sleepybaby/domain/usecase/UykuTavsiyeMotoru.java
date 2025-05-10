@@ -1,4 +1,8 @@
-package com.example.sleepybaby;
+package com.sleepybaby.domain.usecase;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class UykuTavsiyeMotoru {
 
@@ -89,4 +93,4 @@ public class UykuTavsiyeMotoru {
             this.uyanmaZamani = uyanmaZamani;
         }
     }
-}
+} 

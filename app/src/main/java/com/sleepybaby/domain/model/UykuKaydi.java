@@ -1,4 +1,4 @@
-package com.example.sleepybaby;
+package com.sleepybaby.domain.model;
 
 public class UykuKaydi {
     private long id;
@@ -57,4 +57,4 @@ public class UykuKaydi {
     public float getUykuSuresiSaat() {
         return getUykuSuresiDakika() / 60.0f;
     }
-}
+} 

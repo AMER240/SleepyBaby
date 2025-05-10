@@ -1,4 +1,4 @@
-package com.example.sleepybaby;
+package com.sleepybaby.data.repository;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -70,4 +70,4 @@ public class KullaniciTercihYoneticisi {
     public boolean bildirimlerEtkinMi() {
         return tercihler.getBoolean(ANAHTAR_BILDİRİM_ETKIN, true); // Varsayılan: Etkin
     }
-}
+} 

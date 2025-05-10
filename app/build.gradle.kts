@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.sleepybaby"
+    namespace = "com.sleepybaby"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.sleepybaby"
+        applicationId = "com.sleepybaby"
         minSdk = 28
         targetSdk = 35
         versionCode = 1

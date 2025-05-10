@@ -1,5 +1,6 @@
-package com.example.sleepybaby;
+package com.sleepybaby.domain.usecase;
 
+import com.sleepybaby.domain.model.UykuKaydi;
 import java.util.List;
 
 public class UykuHesaplayici {
@@ -53,4 +54,4 @@ public class UykuHesaplayici {
             return ortalamaGunlukUykuSaati >= 9;
         }
     }
-}
+} 
