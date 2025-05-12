@@ -1,24 +1,39 @@
 package com.example.sleepybaby;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class ScheduleActivity extends AppCompatActivity {
+
+    TextView sleepText, wakeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_schedule);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        sleepText = findViewById(R.id.sleepTimeTextView);
+        wakeText = findViewById(R.id.wakeTimeTextView);
+
+        SharedPreferences sharedPreferences = getSharedPreferences("SleepData", MODE_PRIVATE);
+
+        int sleepHour = sharedPreferences.getInt("sleepHour", -1);
+        int sleepMinute = sharedPreferences.getInt("sleepMinute", -1);
+        int wakeHour = sharedPreferences.getInt("wakeHour", -1);
+        int wakeMinute = sharedPreferences.getInt("wakeMinute", -1);
+
+        if (sleepHour != -1 && sleepMinute != -1) {
+            sleepText.setText("Uyku zamanı: " + sleepHour + ":" + String.format("%02d", sleepMinute));
+        } else {
+            sleepText.setText("Uyku zamanı: Kaydedilmedi");
+        }
+
+        if (wakeHour != -1 && wakeMinute != -1) {
+            wakeText.setText("Uyanış zamanı: " + wakeHour + ":" + String.format("%02d", wakeMinute));
+        } else {
+            wakeText.setText("Uyanış zamanı: Kaydedilmedi");
+        }
     }
 }
