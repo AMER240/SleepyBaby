@@ -7,7 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ScheduleActivity extends AppCompatActivity {
 
-    TextView sleepText, wakeText;
+    TextView sleepText;
+    TextView  wakeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
