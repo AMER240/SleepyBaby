@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
             b1=findViewById(R.id.bn1);
             b2=findViewById(R.id.bn2);
             b3=findViewById(R.id.bn3);
+
             b1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
