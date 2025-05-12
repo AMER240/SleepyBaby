@@ -35,8 +35,4 @@ jobs:
       - name: Build and analyze with Gradle
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonarqube \
-          -Dsonar.projectKey=SleepyBaby \
-          -Dsonar.organization=amer240 \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew build sonarqube -Dsonar.projectKey=SleepyBaby -Dsonar.organization=amer240 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
