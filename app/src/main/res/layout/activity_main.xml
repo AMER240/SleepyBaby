@@ -8,7 +8,7 @@
     android:background="#FAFAFA">
 
     <TextView
-        android:id="@+id/titleTextView"
+        android:id="@+id/tx"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
@@ -17,32 +17,32 @@
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/addSleepButton"
+        android:id="@+id/bn1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Uyku Zamanı Ekle"
         android:textSize="18sp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="#3F51B5"
+        android:background="@drawable/btn"
         android:textColor="#FFFFFF"
         android:padding="16dp" />
 
     <Button
-        android:id="@+id/addWakeButton"
+        android:id="@+id/bn2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="#007D96"
+        android:background="@drawable/btn2"
         android:padding="16dp"
         android:text="Uyanış Zamanı Ekle"
         android:textColor="#FFFFFF"
         android:textSize="18sp" />
 
     <Button
-        android:id="@+id/viewScheduleButton"
+        android:id="@+id/bn3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="#513FB5"
+        android:background="@drawable/btn3"
         android:padding="16dp"
         android:text="Uyku Programını Görüntüle"
         android:textColor="#FFFFFF"
