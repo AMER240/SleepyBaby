@@ -17,35 +17,25 @@
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/bn1"
+        android:id="@+id/btnAddChild"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Uyku Zamanı Ekle"
-        android:textSize="18sp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/btn"
-        android:textColor="#FFFFFF"
-        android:padding="16dp" />
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="#4CAF50"
+        android:padding="16dp"
+        android:text="Çocuk Ekle"
+        android:textColor="#FFFFFF" />
+
 
     <Button
-        android:id="@+id/bn2"
+        android:id="@+id/btnViewSchedule"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/btn2"
+        android:text="Tabloyu Görüntüle"
+        android:layout_marginBottom="24dp"
         android:padding="16dp"
-        android:text="Uyanış Zamanı Ekle"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp" />
+        android:backgroundTint="#2196F3"
+        android:textColor="#FFFFFF"/>
 
-    <Button
-        android:id="@+id/bn3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/btn3"
-        android:padding="16dp"
-        android:text="Uyku Programını Görüntüle"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp" />
 
 </LinearLayout>
