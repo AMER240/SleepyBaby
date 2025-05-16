@@ -7,19 +7,19 @@
     android:gravity="center"
     android:background="#FAFAFA">
 
-    <TextView
-        android:id="@+id/sleepTimeTextView"
+    <TimePicker
+        android:id="@+id/timePickerWake"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Uyku zamanı: "
-        android:textSize="20sp"
-        android:layout_marginBottom="16dp" />
+        android:timePickerMode="spinner"
+        android:layout_marginBottom="24dp" />
 
-    <TextView
-        android:id="@+id/wakeTimeTextView"
+    <Button
+        android:id="@+id/saveWakeTimeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Uyanış zamanı: "
-        android:textSize="20sp" />
-
+        android:text="Kaydet"
+        android:backgroundTint="#2196F3"
+        android:textColor="#FFFFFF"
+        android:padding="12dp" />
 </LinearLayout>

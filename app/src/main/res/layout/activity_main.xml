@@ -17,22 +17,32 @@
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/btnAddChild"
+        android:id="@+id/bn1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:backgroundTint="#4CAF50"
+        android:text="Uyku Zamanı Ekle"
+        android:textSize="18sp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/btn"
+        android:textColor="#FFFFFF"
+        android:padding="16dp" />
+
+    <Button
+        android:id="@+id/bn2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/btn2"
         android:padding="16dp"
         android:text="Çocuk Ekle"
         android:textColor="#FFFFFF" />
 
 
     <Button
-        android:id="@+id/btnViewSchedule"
+        android:id="@+id/bn3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tabloyu Görüntüle"
-        android:layout_marginBottom="24dp"
+        android:background="@drawable/btn3"
         android:padding="16dp"
         android:backgroundTint="#2196F3"
         android:textColor="#FFFFFF"/>
