@@ -4,16 +4,15 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    types: [opened, synchronize, reopened]
 
 jobs:
   build:
-    name: Build and analyze on SonarCloud
+    name: Build and Analyze with SonarCloud
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -34,12 +33,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle
 
-      - name: Build and analyze with SonarCloud
+      - name: Build project
+        run: ./gradlew build
+
+      - name: Run SonarCloud Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ./gradlew build && \
           ./gradlew sonar \
+            -Dsonar.branch.name=main \
             -Dsonar.gradle.skipCompile=true \
-            -Dsonar.projectKey=SleepyBaby \
-            -Dsonar.organization=amer240 \
-            -Dsonar.host.url=https://sonarcloud.io  \
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.token=$SONAR_TOKEN
