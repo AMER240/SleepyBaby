@@ -11,7 +11,6 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-
     private static final String DATABASE_NAME = "sleepyBaby.db";
     private static final int DATABASE_VERSION = 1;
 
@@ -96,5 +95,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return deletedRows > 0;
     }
-
 }
