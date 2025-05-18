@@ -1,40 +1,52 @@
 package com.example.sleepybaby;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 public class ScheduleActivity extends AppCompatActivity {
 
-    TextView sleepText;
-    TextView  wakeText;
+
+    RecyclerView recyclerView;
+    ChildrenAdapter adapter;
+    DatabaseHelper databaseHelper;
+    List<Child> childList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule);
 
-        sleepText = findViewById(R.id.sleepTimeTextView);
-        wakeText = findViewById(R.id.wakeTimeTextView);
+        recyclerView = findViewById(R.id.recyclerViewChildren);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        SharedPreferences sharedPreferences = getSharedPreferences("SleepData", MODE_PRIVATE);
+        databaseHelper = new DatabaseHelper(this);
+        childList = databaseHelper.getAllChildren();
 
-        int sleepHour = sharedPreferences.getInt("sleepHour", -1);
-        int sleepMinute = sharedPreferences.getInt("sleepMinute", -1);
-        int wakeHour = sharedPreferences.getInt("wakeHour", -1);
-        int wakeMinute = sharedPreferences.getInt("wakeMinute", -1);
-
-        if (sleepHour != -1 && sleepMinute != -1) {
-            sleepText.setText("Uyku zamanı: " + sleepHour + ":" + String.format("%02d", sleepMinute));
-        } else {
-            sleepText.setText("Uyku zamanı: Kaydedilmedi");
+        if (childList.isEmpty()) {
+            Toast.makeText(this, "Henüz çocuk eklenmedi!", Toast.LENGTH_SHORT).show();
         }
 
-        if (wakeHour != -1 && wakeMinute != -1) {
-            wakeText.setText("Uyanış zamanı: " + wakeHour + ":" + String.format("%02d", wakeMinute));
-        } else {
-            wakeText.setText("Uyanış zamanı: Kaydedilmedi");
-        }
+        adapter = new ChildrenAdapter(childList);
+        recyclerView.setAdapter(adapter);
+
+        // Listener حذف الطفل
+        adapter.setOnChildDeleteListener(childId -> {
+            boolean deleted = databaseHelper.deleteChild(childId);
+            if (deleted) {
+                Toast.makeText(this, "Çocuk silindi", Toast.LENGTH_SHORT).show();
+                // تحديث القائمة
+                childList.clear();
+                childList.addAll(databaseHelper.getAllChildren());
+                adapter.notifyDataSetChanged();
+            } else {
+                Toast.makeText(this, "Silme başarısız oldu", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

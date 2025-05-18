@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class AddChildActivity extends AppCompatActivity {
 
+
     EditText editTextName, editTextAge;
     TimePicker timePickerSleep, timePickerWake;
     Button buttonSaveChild;
@@ -60,4 +61,6 @@ public class AddChildActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

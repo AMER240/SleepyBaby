@@ -9,7 +9,8 @@ public class Child {
     private int wakeHour;
     private int wakeMinute;
 
-    // Getter and Setter methods
+
+// Getter and Setter methods
 
     public int getId() {
         return id;
@@ -53,4 +54,6 @@ public class Child {
     public void setWakeMinute(int wakeMinute) {
         this.wakeMinute = wakeMinute;
     }
+
+
 }
