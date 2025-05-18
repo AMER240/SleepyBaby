@@ -21,6 +21,9 @@ jobs:
           distribution: 'adopt'
           java-version: 17
 
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
       - name: Cache Gradle packages
         uses: actions/cache@v3
         with:
@@ -31,12 +34,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle
 
-      - name: Grant execute permission to gradlew
-        run: chmod +x ./gradlew
-
       - name: Build and analyze with SonarCloud
-        run: ./gradlew build sonar \
-          -Dsonar.projectKey=SleepyBaby \
-          -Dsonar.organization=amer240 \
-          -Dsonar.host.url=https://sonarcloud.io  \
-          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+        run: |
+          ./gradlew build && \
+          ./gradlew sonar \
+            -Dsonar.gradle.skipCompile=true \
+            -Dsonar.projectKey=SleepyBaby \
+            -Dsonar.organization=amer240 \
+            -Dsonar.host.url=https://sonarcloud.io  \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
