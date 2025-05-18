@@ -9,7 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
 
-    Button btnViewSchedule, btnAddChild;
+    Button btnViewSchedule;
+    Button btnAddChild;
 
 
     @Override
