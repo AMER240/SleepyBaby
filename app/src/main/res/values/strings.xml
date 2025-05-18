@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">SleepyBaby</string>
-        <string name="add_sleep_time">Uyku Saati Ekle</string>
-        <string name="add_wake_time">Uyanış Saati Ekle</string>
-        <string name="view_schedule">Uyku Programını Görüntüle</string>
-        <string name="save">Kaydet</string>
-        <string name="edit">Düzenle</string>
-        <string name="delete">Sil</string>
-    </resources>
