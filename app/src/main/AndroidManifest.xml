@@ -16,17 +16,18 @@
         <activity
             android:name=".MainActivity"
             android:exported="true">
+
+        </activity>
+
+        <activity android:name=".ThreadActivity"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".ThreadActivity" android:exported="true" />
         <activity android:name=".AddChildActivity" />
         <activity android:name=".ScheduleActivity" />
-        <activity android:name=".AddSleepTimeActivity" />
-        <activity android:name=".AddWakeTimeActivity" />
 
     </application>
 
