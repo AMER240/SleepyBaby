@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,8 +8,9 @@
     android:padding="24dp"
     android:background="#FAFAFA">
 
+
     <TextView
-        android:id="@+id/titleTextView"
+        android:id="@+id/tx"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
@@ -17,35 +19,25 @@
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/addSleepButton"
+        android:id="@+id/btnAddChild"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Uyku Zamanı Ekle"
-        android:textSize="18sp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="#3F51B5"
-        android:textColor="#FFFFFF"
-        android:padding="16dp" />
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="#4CAF50"
+        android:padding="16dp"
+        android:text="Çocuk Ekle"
+        android:textColor="#FFFFFF" />
+
 
     <Button
-        android:id="@+id/addWakeButton"
+        android:id="@+id/btnViewSchedule"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="#007D96"
+        android:text="Tabloyu Görüntüle"
+        android:layout_marginBottom="24dp"
         android:padding="16dp"
-        android:text="Uyanış Zamanı Ekle"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp" />
+        android:backgroundTint="#2196F3"
+        android:textColor="#FFFFFF"/>
 
-    <Button
-        android:id="@+id/viewScheduleButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#513FB5"
-        android:padding="16dp"
-        android:text="Uyku Programını Görüntüle"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp" />
 
 </LinearLayout>
