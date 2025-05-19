@@ -9,8 +9,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AddChildActivity extends AppCompatActivity {
-    EditText editTextName, editTextAge;
-    TimePicker timePickerSleep, timePickerWake;
+    EditText editTextName;
+    EditText   editTextAge;
+    TimePicker timePickerSleep;
+    TimePicker timePickerWake;
     Button buttonSaveChild;
 
     DatabaseHelper databaseHelper;

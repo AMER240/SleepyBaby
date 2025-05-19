@@ -1,26 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
     android:background="#FAFAFA"
+    android:gravity="center|top"
+    android:orientation="vertical"
     android:padding="24dp">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:indeterminate="true" />
+        android:layout_gravity="center"
+        android:layout_marginTop="200dp"
+        android:foregroundGravity="center"
+        app:srcCompat="@mipmap/ic_launcher_foreground" />
 
     <TextView
-        android:id="@+id/loadingText"
-        android:layout_width="wrap_content"
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Yükleniyor..."
-        android:textSize="20sp"
-        android:layout_marginTop="24dp"
-        android:textColor="#333333" />
+        android:layout_marginTop="300dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="from"
+        android:textAlignment="center"
+        android:textSize="16sp" />
 
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="M &amp; A"
+        android:textAlignment="center"
+        android:textColor="#303F9F"
+        android:textSize="16sp"
+        android:textStyle="italic" />
 </LinearLayout>
