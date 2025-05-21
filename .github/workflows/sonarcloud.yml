@@ -41,8 +41,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           ./gradlew sonar \
-            -Dsonar.projectKey=SleepyBaby \
-            -Dsonar.organization=Amer \
+            -Dsonar.projectKey=amer240_SleepyBaby \
+            -Dsonar.organization=amer240 \
             -Dsonar.host.url=https://sonarcloud.io  \
             -Dsonar.branch.name=main \
             -Dsonar.token=$SONAR_TOKEN \
