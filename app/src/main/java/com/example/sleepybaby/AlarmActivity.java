@@ -20,7 +20,7 @@ public class AlarmActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
+        // لإظهار Activity فوق شاشة القفل وجعلها تظهر حتى لو كان التطبيق مغلقًا
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
@@ -59,12 +59,13 @@ public class AlarmActivity extends AppCompatActivity {
             mediaPlayer.release();
             mediaPlayer = null;
         }
-        finish();
+        finish(); // إغلاق النشاط
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        // التأكد من تحرير MediaPlayer عند تدمير النشاط
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
