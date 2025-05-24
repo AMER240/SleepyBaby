@@ -3,40 +3,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.sleepybaby">
 
-    <!-- Bildirim izinleri -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <application
+    android:allowBackup="true"
+    android:icon="@mipmap/ic_launcher"
+    android:label="SleepyBaby"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:supportsRtl="true"
+    android:theme="@style/Theme.SleepyBaby"
+    tools:targetApi="31">
 
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="SleepyBaby"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.SleepyBaby"
-        tools:targetApi="31">
+    <activity
+        android:name=".MainActivity"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
 
-        <!-- Main Activity with LAUNCHER intent filter -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+    <activity android:name=".ThreadActivity" />
+    <activity android:name=".AddChildActivity" />
+    <activity android:name=".ScheduleActivity" />
 
-        <activity android:name=".ThreadActivity" />
-        <activity android:name=".AddChildActivity" />
-        <activity android:name=".ScheduleActivity" />
+    <activity
+        android:name=".AlarmActivity"
+        android:exported="true"
+        android:showOnLockScreen="true"
+        android:turnScreenOn="true"
+        android:excludeFromRecents="true"
+        android:launchMode="singleTask" />
 
-        <!-- Bildirim alıcısı -->
-        <receiver
-            android:name=".NotificationReceiver"
-            android:enabled="true"
-            android:exported="false" />
-
-    </application>
-
+    <receiver
+        android:name=".NotificationReceiver"
+        android:enabled="true"
+        android:exported="false">
+        <intent-filter>
+            <action android:name="com.example.sleepybaby.ACTION_SHOW_ALARM" />
+        </intent-filter>
+    </receiver>
+</application>
 </manifest>
