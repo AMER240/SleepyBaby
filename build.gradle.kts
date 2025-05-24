@@ -4,7 +4,9 @@ plugins {
     alias(libs.plugins.android.application) apply false
 }
 sonar {
-    properties {
-        property("sonar.sourceEncoding", "UTF-8")
-    }
+  properties {
+    property("sonar.projectKey", "AMER240_SleepyBaby")
+    property("sonar.organization", "amer240")
+    property("sonar.host.url", "https://sonarcloud.io")
+  }
 }
