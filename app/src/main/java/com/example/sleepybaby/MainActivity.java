@@ -2,33 +2,38 @@ package com.example.sleepybaby;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
-
-    Button btnViewSchedule;
-    Button btnAddChild;
-
+    private RecyclerView recyclerViewChildren;
+    private FloatingActionButton btnAddChild;
+    private ChildAdapter childAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnViewSchedule = findViewById(R.id.btnViewSchedule);
+        // View'ları initialize et
+        recyclerViewChildren = findViewById(R.id.recyclerViewChildren);
         btnAddChild = findViewById(R.id.btnAddChild);
 
-        btnViewSchedule.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ScheduleActivity.class);
-            startActivity(intent);
-        });
+        // RecyclerView setup
+        recyclerViewChildren.setLayoutManager(new LinearLayoutManager(this));
+        childAdapter = new ChildAdapter();
+        recyclerViewChildren.setAdapter(childAdapter);
 
+        // Çocuk ekleme butonu tıklama event'i
         btnAddChild.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddChildActivity.class);
             startActivity(intent);
         });
     }
-
 }

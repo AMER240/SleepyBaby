@@ -22,7 +22,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_AGE = "age";
+    public static final String COLUMN_BIRTH_DATE = "birthDate";
+    public static final String COLUMN_GENDER = "gender";
     public static final String COLUMN_SLEEP_HOUR = "sleepHour";
     public static final String COLUMN_SLEEP_MINUTE = "sleepMinute";
     public static final String COLUMN_WAKE_HOUR = "wakeHour";
@@ -52,12 +53,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Children tablosu
         String CREATE_CHILDREN_TABLE = "CREATE TABLE " + TABLE_CHILDREN + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_NAME + " TEXT,"
-                + COLUMN_AGE + " INTEGER,"
-                + COLUMN_SLEEP_HOUR + " INTEGER,"
-                + COLUMN_SLEEP_MINUTE + " INTEGER,"
-                + COLUMN_WAKE_HOUR + " INTEGER,"
-                + COLUMN_WAKE_MINUTE + " INTEGER"
+                + COLUMN_NAME + " TEXT NOT NULL,"
+                + COLUMN_BIRTH_DATE + " INTEGER NOT NULL,"
+                + COLUMN_GENDER + " TEXT NOT NULL,"
+                + COLUMN_SLEEP_HOUR + " INTEGER NOT NULL,"
+                + COLUMN_SLEEP_MINUTE + " INTEGER NOT NULL,"
+                + COLUMN_WAKE_HOUR + " INTEGER NOT NULL,"
+                + COLUMN_WAKE_MINUTE + " INTEGER NOT NULL"
                 + ")";
         db.execSQL(CREATE_CHILDREN_TABLE);
         

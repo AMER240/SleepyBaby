@@ -8,54 +8,83 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
+        android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/editTextName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Çocuk Adı"
-            android:inputType="textPersonName"
-            android:layout_marginBottom="16dp"/>
-
-        <EditText
-            android:id="@+id/editTextAge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Yaş"
-            android:inputType="number"
-            android:layout_marginBottom="24dp"/>
-
+        <!-- Çocuk Bilgileri -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Uyku Zamanı Seçin"
+            android:text="Çocuk Bilgileri"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+            <EditText
+                android:id="@+id/editTextName"
+                android:hint="Çocuk Adı"
+                android:inputType="textPersonName"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+            <EditText
+                android:id="@+id/editTextBirthDate"
+                android:hint="Doğum Tarihi"
+                android:inputType="date"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Cinsiyet Seçimi -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cinsiyet"
             android:textSize="18sp"
             android:layout_marginBottom="8dp"/>
+
+        <RadioGroup
+            android:id="@+id/radioGroupGender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp">
+            <RadioButton
+                android:id="@+id/radioMale"
+                android:text="Erkek"/>
+            <RadioButton
+                android:id="@+id/radioFemale"
+                android:text="Kız"/>
+        </RadioGroup>
+
+        <!-- Uyku Zamanları -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Uyku Zamanları"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
 
         <TimePicker
             android:id="@+id/timePickerSleep"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:timePickerMode="spinner"
+            android:layout_marginBottom="16dp"/>
+
+        <TimePicker
+            android:id="@+id/timePickerWake"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:timePickerMode="spinner"
             android:layout_marginBottom="24dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Uyanış Zamanı Seçin"
-            android:textSize="18sp"
-            android:layout_marginBottom="8dp"/>
-
-        <TimePicker
-            android:id="@+id/timePickerWake"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:timePickerMode="spinner"
-            android:layout_marginBottom="32dp"/>
-
-        <Button
+        <!-- Kaydet Butonu -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonSaveChild"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
