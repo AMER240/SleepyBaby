@@ -34,31 +34,20 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp">
             <EditText
-                android:id="@+id/editTextBirthDate"
-                android:hint="Doğum Tarihi"
-                android:inputType="date"/>
+                android:id="@+id/editTextBirthYear"
+                android:hint="Doğum Yılı (örn: 2018)"
+                android:inputType="number"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Cinsiyet Seçimi -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cinsiyet"
-            android:textSize="18sp"
-            android:layout_marginBottom="8dp"/>
-
-        <RadioGroup
-            android:id="@+id/radioGroupGender"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp">
-            <RadioButton
-                android:id="@+id/radioMale"
-                android:text="Erkek"/>
-            <RadioButton
-                android:id="@+id/radioFemale"
-                android:text="Kız"/>
-        </RadioGroup>
+            android:layout_marginBottom="16dp">
+            <EditText
+                android:id="@+id/editTextGender"
+                android:hint="Cinsiyet (örn: Erkek/Kız)"
+                android:inputType="text"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Uyku Zamanları -->
         <TextView

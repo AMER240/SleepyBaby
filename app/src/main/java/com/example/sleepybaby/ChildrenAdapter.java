@@ -43,7 +43,10 @@ public void onBindViewHolder(@NonNull ChildViewHolder holder, int position) {
     Child child = childList.get(position);
 
     holder.textViewName.setText(child.getName());
-    holder.textViewAge.setText("Yaş: " + child.getAge());
+    int currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+    int birthYear = (int) child.getBirthDate();
+    int age = currentYear - birthYear;
+    holder.textViewAge.setText("Yaş: " + age);
     holder.textViewSleep.setText(String.format("Uyku: %02d:%02d", child.getSleepHour(), child.getSleepMinute()));
     holder.textViewWake.setText(String.format("Uyanma: %02d:%02d", child.getWakeHour(), child.getWakeMinute()));
 
