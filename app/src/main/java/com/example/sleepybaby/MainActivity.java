@@ -7,7 +7,7 @@ import android.widget.Toast;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.button.MaterialButton;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -18,8 +18,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         try {
-            MaterialCardView cardViewAddChild = findViewById(R.id.cardViewAddChild);
-            cardViewAddChild.setOnClickListener(v -> {
+            MaterialButton buttonAddChild = findViewById(R.id.buttonAddChild);
+            buttonAddChild.setOnClickListener(v -> {
+                Log.d(TAG, "Add child button clicked");
                 Intent intent = new Intent(MainActivity.this, AddChildActivity.class);
                 startActivity(intent);
             });
