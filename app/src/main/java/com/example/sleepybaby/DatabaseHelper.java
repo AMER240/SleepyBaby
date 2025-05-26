@@ -181,23 +181,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return records;
     }
     
-    // İstatistik kaydetme
-    public boolean saveSleepStatistics(SleepStatistics stats) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_CHILD_ID, stats.getChildId());
-        values.put(COLUMN_DATE, stats.getDate().getTime());
-        values.put(COLUMN_TOTAL_SLEEP_MINUTES, stats.getTotalSleepMinutes());
-        values.put(COLUMN_NUMBER_OF_SLEEPS, stats.getNumberOfSleeps());
-        values.put(COLUMN_AVERAGE_SLEEP_QUALITY, stats.getAverageSleepQuality());
-        values.put(COLUMN_LONGEST_SLEEP_MINUTES, stats.getLongestSleepMinutes());
-        values.put(COLUMN_SHORTEST_SLEEP_MINUTES, stats.getShortestSleepMinutes());
-        
-        long result = db.insert(TABLE_SLEEP_STATISTICS, null, values);
-        db.close();
-        return result != -1;
-    }
-    
     // Belirli bir tarihten sonraki uyku istatistiklerini getirme
     public SleepStatistics getSleepStatistics(int childId, Date startDate) {
         SQLiteDatabase db = this.getReadableDatabase();
