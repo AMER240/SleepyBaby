@@ -7,7 +7,6 @@ import android.widget.Toast;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -30,10 +29,10 @@ public class ChildDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_child_detail);
 
         try {
-            // Toolbar setup
-            Toolbar toolbar = findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            // ActionBar ayarla
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
 
             // Child ID'yi al
             childId = getIntent().getIntExtra("child_id", -1);
