@@ -31,6 +31,14 @@
         <activity android:name=".AddChildActivity" />
         <activity android:name=".ScheduleActivity" />
 
+        <activity
+            android:name=".ChildrenListActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ChildDetailActivity"
+            android:exported="false" />
+
         <!-- Bildirim alıcısı -->
         <receiver
             android:name=".NotificationReceiver"

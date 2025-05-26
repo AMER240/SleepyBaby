@@ -7,22 +7,10 @@ import android.widget.Toast;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Date;
-import com.example.sleepybaby.ChildrenAdapter;
-import com.example.sleepybaby.DatabaseHelper;
-import com.example.sleepybaby.Child;
+import com.google.android.material.card.MaterialCardView;
 
-public class MainActivity extends AppCompatActivity implements ChildrenAdapter.OnChildDeleteListener {
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private RecyclerView recyclerViewChildren;
-    private FloatingActionButton btnAddChild;
-    private ChildrenAdapter childrenAdapter;
-    private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,22 +18,8 @@ public class MainActivity extends AppCompatActivity implements ChildrenAdapter.O
         setContentView(R.layout.activity_main);
 
         try {
-            // View'ları initialize et
-            recyclerViewChildren = findViewById(R.id.recyclerViewChildren);
-            btnAddChild = findViewById(R.id.btnAddChild);
-            databaseHelper = new DatabaseHelper(this);
-
-            // RecyclerView setup
-            recyclerViewChildren.setLayoutManager(new LinearLayoutManager(this));
-            childrenAdapter = new ChildrenAdapter(new ArrayList<>());
-            childrenAdapter.setOnChildDeleteListener(this);
-            recyclerViewChildren.setAdapter(childrenAdapter);
-
-            // Veritabanından çocukları yükle
-            loadChildrenFromDatabase();
-
-            // Çocuk ekleme butonu tıklama event'i
-            btnAddChild.setOnClickListener(v -> {
+            MaterialCardView cardViewAddChild = findViewById(R.id.cardViewAddChild);
+            cardViewAddChild.setOnClickListener(v -> {
                 Intent intent = new Intent(MainActivity.this, AddChildActivity.class);
                 startActivity(intent);
             });
@@ -58,32 +32,12 @@ public class MainActivity extends AppCompatActivity implements ChildrenAdapter.O
     @Override
     protected void onResume() {
         super.onResume();
-        loadChildrenFromDatabase();
-    }
-
-    private void loadChildrenFromDatabase() {
-        try {
-            List<Child> children = databaseHelper.getAllChildren();
-            childrenAdapter.setChildList(children);
-        } catch (Exception e) {
-            Log.e(TAG, "Error loading children: " + e.getMessage());
-            Toast.makeText(this, "Çocuklar yüklenirken hata oluştu", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onChildDelete(int childId) {
-        try {
-            boolean deleted = databaseHelper.deleteChild(childId);
-            if (deleted) {
-                Toast.makeText(this, "Çocuk başarıyla silindi", Toast.LENGTH_SHORT).show();
-                loadChildrenFromDatabase();
-            } else {
-                Toast.makeText(this, "Çocuk silinirken hata oluştu", Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error deleting child: " + e.getMessage());
-            Toast.makeText(this, "Çocuk silinirken hata oluştu", Toast.LENGTH_SHORT).show();
+        // Veritabanında çocuk var mı kontrol et
+        DatabaseHelper db = new DatabaseHelper(this);
+        if (!db.getAllChildren().isEmpty()) {
+            // Çocuk varsa direkt çocuklar listesine git
+            startActivity(new Intent(this, ChildrenListActivity.class));
+            finish();
         }
     }
 }

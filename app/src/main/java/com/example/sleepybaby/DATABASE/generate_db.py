@@ -7,11 +7,12 @@ cursor.execute("""
 CREATE TABLE IF NOT EXISTS children (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    age INTEGER,
-    sleepHour INTEGER,
-    sleepMinute INTEGER,
-    wakeHour INTEGER,
-    wakeMinute INTEGER
+    birthDate INTEGER NOT NULL,
+    gender TEXT NOT NULL,
+    sleepHour INTEGER NOT NULL,
+    sleepMinute INTEGER NOT NULL,
+    wakeHour INTEGER NOT NULL,
+    wakeMinute INTEGER NOT NULL
 )
 """)
 

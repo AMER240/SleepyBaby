@@ -3,7 +3,6 @@ package com.example.sleepybaby;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,10 +10,10 @@ import java.util.List;
 
 public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ChildViewHolder> {
     private List<Child> childList;
-    private OnChildDeleteListener deleteListener;
+    private OnChildClickListener clickListener;
 
-    public interface OnChildDeleteListener {
-        void onChildDelete(int childId);
+    public interface OnChildClickListener {
+        void onChildClick(Child child);
     }
 
     public ChildrenAdapter(List<Child> childList) {
@@ -26,8 +25,8 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ChildV
         notifyDataSetChanged();
     }
 
-    public void setOnChildDeleteListener(OnChildDeleteListener listener) {
-        this.deleteListener = listener;
+    public void setOnChildClickListener(OnChildClickListener listener) {
+        this.clickListener = listener;
     }
 
     @NonNull
@@ -42,11 +41,11 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ChildV
     public void onBindViewHolder(@NonNull ChildViewHolder holder, int position) {
         Child child = childList.get(position);
         holder.textViewName.setText(child.getName());
-        holder.textViewAge.setText(String.valueOf(child.getAge()));
+        holder.textViewAge.setText(child.getAge() + " yaşında");
         
-        holder.btnDelete.setOnClickListener(v -> {
-            if (deleteListener != null) {
-                deleteListener.onChildDelete(child.getId());
+        holder.itemView.setOnClickListener(v -> {
+            if (clickListener != null) {
+                clickListener.onChildClick(child);
             }
         });
     }
@@ -59,13 +58,11 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ChildV
     static class ChildViewHolder extends RecyclerView.ViewHolder {
         TextView textViewName;
         TextView textViewAge;
-        ImageButton btnDelete;
 
         ChildViewHolder(View itemView) {
             super(itemView);
             textViewName = itemView.findViewById(R.id.textViewName);
             textViewAge = itemView.findViewById(R.id.textViewAge);
-            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }
 }
