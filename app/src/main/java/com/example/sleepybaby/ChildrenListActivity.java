@@ -7,7 +7,6 @@ import android.widget.Toast;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -28,13 +27,6 @@ public class ChildrenListActivity extends AppCompatActivity implements ChildrenA
         try {
             setContentView(R.layout.activity_children_list);
             Log.d(TAG, "Layout set successfully");
-
-            // Toolbar setup
-            Toolbar toolbar = findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setTitle("Çocuklarım");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            Log.d(TAG, "Toolbar setup completed");
 
             // View'ları initialize et
             recyclerViewChildren = findViewById(R.id.recyclerViewChildren);
@@ -75,6 +67,12 @@ public class ChildrenListActivity extends AppCompatActivity implements ChildrenA
     private void loadChildrenFromDatabase() {
         try {
             Log.d(TAG, "Loading children from database...");
+            
+            if (databaseHelper == null) {
+                Log.e(TAG, "DatabaseHelper is null, initializing...");
+                databaseHelper = new DatabaseHelper(this);
+            }
+            
             List<Child> children = databaseHelper.getAllChildren();
             Log.d(TAG, "Loaded " + children.size() + " children from database");
             
@@ -82,8 +80,12 @@ public class ChildrenListActivity extends AppCompatActivity implements ChildrenA
                 Log.d(TAG, "Child: " + child.getName() + ", Age: " + child.getAge() + ", Birth Year: " + child.getBirthDate());
             }
             
-            childrenAdapter.setChildList(children);
-            Log.d(TAG, "Children list updated in adapter");
+            if (childrenAdapter != null) {
+                childrenAdapter.setChildList(children);
+                Log.d(TAG, "Children list updated in adapter");
+            } else {
+                Log.e(TAG, "ChildrenAdapter is null");
+            }
         } catch (Exception e) {
             Log.e(TAG, "Error loading children: " + e.getMessage());
             e.printStackTrace();
