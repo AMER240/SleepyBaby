@@ -16,7 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
     private static final String DATABASE_NAME = "sleepyBaby.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public static final String TABLE_CHILDREN = "children";
     public static final String TABLE_SLEEP_RECORDS = "sleep_records";
@@ -24,12 +24,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_BIRTH_DATE = "birthDate";
+    public static final String COLUMN_BIRTH_DATE = "birth_date";
     public static final String COLUMN_GENDER = "gender";
-    public static final String COLUMN_SLEEP_HOUR = "sleepHour";
-    public static final String COLUMN_SLEEP_MINUTE = "sleepMinute";
-    public static final String COLUMN_WAKE_HOUR = "wakeHour";
-    public static final String COLUMN_WAKE_MINUTE = "wakeMinute";
+    public static final String COLUMN_SLEEP_HOUR = "sleep_hour";
+    public static final String COLUMN_SLEEP_MINUTE = "sleep_minute";
+    public static final String COLUMN_WAKE_HOUR = "wake_hour";
+    public static final String COLUMN_WAKE_MINUTE = "wake_minute";
     
     // SleepRecord tablosu için kolonlar
     public static final String COLUMN_CHILD_ID = "childId";
@@ -84,7 +84,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean addChild(String name, long birthDate, String gender, int sleepHour, int sleepMinute, int wakeHour, int wakeMinute) {
         SQLiteDatabase db = null;
         try {
+            Log.d(TAG, "Starting addChild method...");
+            Log.d(TAG, "Parameters - Name: '" + name + "', BirthDate: " + birthDate + ", Gender: '" + gender + "'");
+            Log.d(TAG, "Sleep time: " + sleepHour + ":" + sleepMinute + ", Wake time: " + wakeHour + ":" + wakeMinute);
+            
             db = this.getWritableDatabase();
+            Log.d(TAG, "Database opened successfully");
+            
             ContentValues values = new ContentValues();
             values.put(COLUMN_NAME, name);
             values.put(COLUMN_BIRTH_DATE, birthDate);
@@ -93,20 +99,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_SLEEP_MINUTE, sleepMinute);
             values.put(COLUMN_WAKE_HOUR, wakeHour);
             values.put(COLUMN_WAKE_MINUTE, wakeMinute);
-
-            Log.d(TAG, "Adding child: " + name + ", birthDate: " + birthDate + ", gender: " + gender);
+            
+            Log.d(TAG, "ContentValues created: " + values.toString());
             
             long result = db.insert(TABLE_CHILDREN, null, values);
             Log.d(TAG, "Insert result: " + result);
             
-            return result != -1;
+            if (result == -1) {
+                Log.e(TAG, "Insert failed - result is -1");
+                return false;
+            } else {
+                Log.d(TAG, "Insert successful - new row ID: " + result);
+                return true;
+            }
+            
         } catch (Exception e) {
-            Log.e(TAG, "Error adding child: " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "Exception in addChild: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+            Log.e(TAG, "Stack trace: ", e);
             return false;
         } finally {
             if (db != null && db.isOpen()) {
                 db.close();
+                Log.d(TAG, "Database closed");
             }
         }
     }
