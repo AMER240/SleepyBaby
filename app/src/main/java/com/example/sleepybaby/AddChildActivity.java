@@ -23,7 +23,7 @@ public class AddChildActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_child);
 
         editTextName = findViewById(R.id.editTextName);
-        editTextAge = findViewById(R.id.editTextAge);
+
         timePickerSleep = findViewById(R.id.timePickerSleep);
         timePickerWake = findViewById(R.id.timePickerWake);
         buttonSaveChild = findViewById(R.id.buttonSaveChild);

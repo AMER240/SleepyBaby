@@ -103,7 +103,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME, name);
-        values.put(COLUMN_AGE, age);
+        values.put(COLUMN_BIRTH_DATE, birthDate.getTime());
         values.put(COLUMN_SLEEP_HOUR, sleepHour);
         values.put(COLUMN_SLEEP_MINUTE, sleepMinute);
         values.put(COLUMN_WAKE_HOUR, wakeHour);
@@ -125,7 +125,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Child child = new Child();
                 child.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)));
                 child.setName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME)));
-                child.setAge(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_AGE)));
+                child.setBirthDate(new Date(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_BIRTH_DATE))));
                 child.setSleepHour(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SLEEP_HOUR)));
                 child.setSleepMinute(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SLEEP_MINUTE)));
                 child.setWakeHour(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_WAKE_HOUR)));
