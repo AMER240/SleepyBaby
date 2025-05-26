@@ -79,7 +79,7 @@
             android:layout_marginBottom="24dp"/>
 
         <!-- Kaydet Butonu -->
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/buttonSaveChild"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
