@@ -16,7 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
     private static final String DATABASE_NAME = "sleepyBaby.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public static final String TABLE_CHILDREN = "children";
     public static final String TABLE_SLEEP_RECORDS = "sleep_records";
@@ -56,7 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE children (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "name TEXT NOT NULL," +
-                "birth_date TEXT NOT NULL," +
+                "birth_date INTEGER NOT NULL," +
                 "gender TEXT NOT NULL," +
                 "sleep_hour INTEGER NOT NULL," +
                 "sleep_minute INTEGER NOT NULL," +
