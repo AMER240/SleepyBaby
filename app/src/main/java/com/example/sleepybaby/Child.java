@@ -10,6 +10,17 @@ public class Child {
     private int wakeHour;
     private int wakeMinute;
 
+    // Boş constructor
+    public Child() {
+        this.id = -1;
+        this.name = "";
+        this.birthDate = System.currentTimeMillis();
+        this.sleepHour = 0;
+        this.sleepMinute = 0;
+        this.wakeHour = 0;
+        this.wakeMinute = 0;
+    }
+
     public Child(int id, String name, long birthDate, int sleepHour, int sleepMinute, int wakeHour, int wakeMinute) {
         this.id = id;
         this.name = name;
