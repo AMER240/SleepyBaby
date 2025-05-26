@@ -5,7 +5,7 @@ import java.util.Date;
 public class SleepStatistics {
     private long childId;
     private Date date;
-    private long totalSleepMinutes;
+    private int totalSleepMinutes;
     private int numberOfSleeps;
     private double averageSleepQuality;
     private long longestSleepMinutes;
@@ -30,8 +30,8 @@ public class SleepStatistics {
     public Date getDate() { return date; }
     public void setDate(Date date) { this.date = date; }
     
-    public long getTotalSleepMinutes() { return totalSleepMinutes; }
-    public void setTotalSleepMinutes(long totalSleepMinutes) { this.totalSleepMinutes = totalSleepMinutes; }
+    public int getTotalSleepMinutes() { return totalSleepMinutes; }
+    public void setTotalSleepMinutes(int totalSleepMinutes) { this.totalSleepMinutes = totalSleepMinutes; }
     
     public int getNumberOfSleeps() { return numberOfSleeps; }
     public void setNumberOfSleeps(int numberOfSleeps) { this.numberOfSleeps = numberOfSleeps; }

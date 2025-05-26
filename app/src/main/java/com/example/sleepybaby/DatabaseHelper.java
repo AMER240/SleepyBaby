@@ -219,7 +219,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 // Uyku süresini hesapla (dakika cinsinden)
                 long duration = (wakeTime - sleepTime) / (60 * 1000);
-                totalSleepMinutes += duration;
+                totalSleepMinutes += (int)duration;
                 totalQuality += quality;
                 recordCount++;
             } while (cursor.moveToNext());
