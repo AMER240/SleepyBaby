@@ -84,75 +84,93 @@ public class SleepCalculator {
         return recommendation.toString();
     }
     
-    // Günlük istatistikleri hesapla
-    public static SleepStatistics calculateDailyStatistics(long childId, List<SleepRecord> records, Date date) {
-        SleepStatistics stats = new SleepStatistics(childId, date);
+    // Günlük uyku istatistiklerini hesapla
+    public static SleepStatistics calculateDailyStats(List<SleepRecord> records, Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date startOfDay = calendar.getTime();
         
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        Date startOfDay = cal.getTime();
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        Date endOfDay = calendar.getTime();
         
-        cal.add(Calendar.DAY_OF_MONTH, 1);
-        Date endOfDay = cal.getTime();
+        int totalSleepMinutes = 0;
+        double totalQuality = 0;
+        int recordCount = 0;
         
         for (SleepRecord record : records) {
-            if (record.getStartTime().after(startOfDay) && record.getStartTime().before(endOfDay)) {
-                stats.addSleepRecord(record);
+            if (record.getSleepTime().after(startOfDay) && record.getSleepTime().before(endOfDay)) {
+                long duration = record.getDurationInMinutes();
+                totalSleepMinutes += (int)duration;
+                totalQuality += record.getSleepQuality();
+                recordCount++;
             }
         }
         
-        return stats;
+        double averageQuality = recordCount > 0 ? totalQuality / recordCount : 0;
+        return new SleepStatistics(totalSleepMinutes, averageQuality, recordCount);
     }
     
-    // Haftalık istatistikleri hesapla
-    public static SleepStatistics calculateWeeklyStatistics(long childId, List<SleepRecord> records, Date date) {
-        SleepStatistics stats = new SleepStatistics(childId, date);
+    // Haftalık uyku istatistiklerini hesapla
+    public static SleepStatistics calculateWeeklyStats(List<SleepRecord> records, Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.add(Calendar.DAY_OF_WEEK, -calendar.get(Calendar.DAY_OF_WEEK) + 1);
+        Date startOfWeek = calendar.getTime();
         
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.add(Calendar.DAY_OF_WEEK, -cal.get(Calendar.DAY_OF_WEEK) + 1); // Haftanın başlangıcı
-        Date startOfWeek = cal.getTime();
+        calendar.add(Calendar.DAY_OF_WEEK, 7);
+        Date endOfWeek = calendar.getTime();
         
-        cal.add(Calendar.DAY_OF_WEEK, 7);
-        Date endOfWeek = cal.getTime();
+        int totalSleepMinutes = 0;
+        double totalQuality = 0;
+        int recordCount = 0;
         
         for (SleepRecord record : records) {
-            if (record.getStartTime().after(startOfWeek) && record.getStartTime().before(endOfWeek)) {
-                stats.addSleepRecord(record);
+            if (record.getSleepTime().after(startOfWeek) && record.getSleepTime().before(endOfWeek)) {
+                long duration = record.getDurationInMinutes();
+                totalSleepMinutes += (int)duration;
+                totalQuality += record.getSleepQuality();
+                recordCount++;
             }
         }
         
-        return stats;
+        double averageQuality = recordCount > 0 ? totalQuality / recordCount : 0;
+        return new SleepStatistics(totalSleepMinutes, averageQuality, recordCount);
     }
     
-    // Aylık istatistikleri hesapla
-    public static SleepStatistics calculateMonthlyStatistics(long childId, List<SleepRecord> records, Date date) {
-        SleepStatistics stats = new SleepStatistics(childId, date);
+    // Aylık uyku istatistiklerini hesapla
+    public static SleepStatistics calculateMonthlyStats(List<SleepRecord> records, Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date startOfMonth = calendar.getTime();
         
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.DAY_OF_MONTH, 1); // Ayın başlangıcı
-        Date startOfMonth = cal.getTime();
+        calendar.add(Calendar.MONTH, 1);
+        Date endOfMonth = calendar.getTime();
         
-        cal.add(Calendar.MONTH, 1);
-        Date endOfMonth = cal.getTime();
+        int totalSleepMinutes = 0;
+        double totalQuality = 0;
+        int recordCount = 0;
         
         for (SleepRecord record : records) {
-            if (record.getStartTime().after(startOfMonth) && record.getStartTime().before(endOfMonth)) {
-                stats.addSleepRecord(record);
+            if (record.getSleepTime().after(startOfMonth) && record.getSleepTime().before(endOfMonth)) {
+                long duration = record.getDurationInMinutes();
+                totalSleepMinutes += (int)duration;
+                totalQuality += record.getSleepQuality();
+                recordCount++;
             }
         }
         
-        return stats;
+        double averageQuality = recordCount > 0 ? totalQuality / recordCount : 0;
+        return new SleepStatistics(totalSleepMinutes, averageQuality, recordCount);
     }
     
     // Uyku süresini formatla (saat:dakika)

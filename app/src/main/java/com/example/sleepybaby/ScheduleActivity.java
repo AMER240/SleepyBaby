@@ -34,19 +34,5 @@ public class ScheduleActivity extends AppCompatActivity {
 
         adapter = new ChildrenAdapter(childList);
         recyclerView.setAdapter(adapter);
-
-        // Listener حذف الطفل
-        adapter.setOnChildDeleteListener(childId -> {
-            boolean deleted = databaseHelper.deleteChild(childId);
-            if (deleted) {
-                Toast.makeText(this, "Çocuk silindi", Toast.LENGTH_SHORT).show();
-                // تحديث القائمة
-                childList.clear();
-                childList.addAll(databaseHelper.getAllChildren());
-                adapter.notifyDataSetChanged();
-            } else {
-                Toast.makeText(this, "Silme başarısız oldu", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }
