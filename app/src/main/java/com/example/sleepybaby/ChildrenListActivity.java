@@ -23,25 +23,31 @@ public class ChildrenListActivity extends AppCompatActivity implements ChildrenA
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_children_list);
-
+        Log.d(TAG, "ChildrenListActivity onCreate started");
+        
         try {
+            setContentView(R.layout.activity_children_list);
+            Log.d(TAG, "Layout set successfully");
+
             // Toolbar setup
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle("Çocuklarım");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            Log.d(TAG, "Toolbar setup completed");
 
             // View'ları initialize et
             recyclerViewChildren = findViewById(R.id.recyclerViewChildren);
             FloatingActionButton fabAddSleepRecord = findViewById(R.id.fabAddSleepRecord);
             databaseHelper = new DatabaseHelper(this);
+            Log.d(TAG, "Views initialized");
 
             // RecyclerView setup
             recyclerViewChildren.setLayoutManager(new LinearLayoutManager(this));
             childrenAdapter = new ChildrenAdapter(new ArrayList<>());
             childrenAdapter.setOnChildClickListener(this);
             recyclerViewChildren.setAdapter(childrenAdapter);
+            Log.d(TAG, "RecyclerView setup completed");
 
             // Veritabanından çocukları yükle
             loadChildrenFromDatabase();
@@ -49,10 +55,14 @@ public class ChildrenListActivity extends AppCompatActivity implements ChildrenA
             // Uyku kaydı ekleme butonu
             fabAddSleepRecord.setOnClickListener(v -> {
                 // TODO: Uyku kaydı ekleme aktivitesini başlat
+                Log.d(TAG, "FAB clicked");
             });
+            
+            Log.d(TAG, "ChildrenListActivity onCreate completed successfully");
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreate: " + e.getMessage());
-            Toast.makeText(this, "Uygulama başlatılırken hata oluştu", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            Toast.makeText(this, "Uygulama başlatılırken hata oluştu: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -64,11 +74,20 @@ public class ChildrenListActivity extends AppCompatActivity implements ChildrenA
 
     private void loadChildrenFromDatabase() {
         try {
+            Log.d(TAG, "Loading children from database...");
             List<Child> children = databaseHelper.getAllChildren();
+            Log.d(TAG, "Loaded " + children.size() + " children from database");
+            
+            for (Child child : children) {
+                Log.d(TAG, "Child: " + child.getName() + ", Age: " + child.getAge() + ", Birth Year: " + child.getBirthDate());
+            }
+            
             childrenAdapter.setChildList(children);
+            Log.d(TAG, "Children list updated in adapter");
         } catch (Exception e) {
             Log.e(TAG, "Error loading children: " + e.getMessage());
-            Toast.makeText(this, "Çocuklar yüklenirken hata oluştu", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+            Toast.makeText(this, "Çocuklar yüklenirken hata oluştu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

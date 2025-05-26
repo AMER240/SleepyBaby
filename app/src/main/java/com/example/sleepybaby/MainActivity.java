@@ -26,6 +26,13 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, AddChildActivity.class);
                 startActivity(intent);
             });
+            
+            MaterialButton buttonViewChildren = findViewById(R.id.buttonViewChildren);
+            buttonViewChildren.setOnClickListener(v -> {
+                Log.d(TAG, "View children button clicked");
+                Intent intent = new Intent(MainActivity.this, ChildrenListActivity.class);
+                startActivity(intent);
+            });
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreate: " + e.getMessage());
             Toast.makeText(this, "Uygulama başlatılırken hata oluştu", Toast.LENGTH_LONG).show();
@@ -42,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
             List<Child> children = db.getAllChildren();
             Log.d(TAG, "Found " + children.size() + " children in database");
             
+            // Geçici olarak otomatik yönlendirmeyi devre dışı bırak
+            /*
             if (!children.isEmpty()) {
                 Log.d(TAG, "Children found, navigating to ChildrenListActivity");
                 // Çocuk varsa direkt çocuklar listesine git
@@ -50,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Log.d(TAG, "No children found, staying on MainActivity");
             }
+            */
         } catch (Exception e) {
             Log.e(TAG, "Error in onResume: " + e.getMessage());
             e.printStackTrace();
