@@ -10,6 +10,16 @@ public class Child {
     private int wakeHour;
     private int wakeMinute;
 
+    public Child(int id, String name, long birthDate, int sleepHour, int sleepMinute, int wakeHour, int wakeMinute) {
+        this.id = id;
+        this.name = name;
+        this.birthDate = birthDate;
+        this.sleepHour = sleepHour;
+        this.sleepMinute = sleepMinute;
+        this.wakeHour = wakeHour;
+        this.wakeMinute = wakeMinute;
+    }
+
 // Getter and Setter methods
 
     public int getId() {
@@ -59,5 +69,17 @@ public class Child {
     }
     public void setWakeMinute(int wakeMinute) {
         this.wakeMinute = wakeMinute;
+    }
+
+    public int getAge() {
+        java.util.Calendar now = java.util.Calendar.getInstance();
+        java.util.Calendar birth = java.util.Calendar.getInstance();
+        birth.setTimeInMillis(birthDate);
+        
+        int age = now.get(java.util.Calendar.YEAR) - birth.get(java.util.Calendar.YEAR);
+        if (now.get(java.util.Calendar.DAY_OF_YEAR) < birth.get(java.util.Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
+        return age;
     }
 }

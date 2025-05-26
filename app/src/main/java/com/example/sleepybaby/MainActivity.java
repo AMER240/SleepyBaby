@@ -13,16 +13,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
-import com.example.sleepybaby.ChildAdapter;
+import com.example.sleepybaby.ChildrenAdapter;
 import com.example.sleepybaby.DatabaseHelper;
 import com.example.sleepybaby.Child;
 
-public class MainActivity extends AppCompatActivity implements ChildAdapter.OnChildDeleteListener {
+public class MainActivity extends AppCompatActivity implements ChildrenAdapter.OnChildDeleteListener {
     private static final String TAG = "MainActivity";
     private RecyclerView recyclerViewChildren;
     private FloatingActionButton btnAddChild;
-    private ChildAdapter childAdapter;
-
+    private ChildrenAdapter childrenAdapter;
     private DatabaseHelper databaseHelper;
 
     @Override
@@ -38,9 +37,9 @@ public class MainActivity extends AppCompatActivity implements ChildAdapter.OnCh
 
             // RecyclerView setup
             recyclerViewChildren.setLayoutManager(new LinearLayoutManager(this));
-            childAdapter = new ChildAdapter();
-            childAdapter.setOnChildDeleteListener(this);
-            recyclerViewChildren.setAdapter(childAdapter);
+            childrenAdapter = new ChildrenAdapter(new ArrayList<>());
+            childrenAdapter.setOnChildDeleteListener(this);
+            recyclerViewChildren.setAdapter(childrenAdapter);
 
             // Veritabanından çocukları yükle
             loadChildrenFromDatabase();
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements ChildAdapter.OnCh
     private void loadChildrenFromDatabase() {
         try {
             List<Child> children = databaseHelper.getAllChildren();
-            childAdapter.setChildList(children);
+            childrenAdapter.setChildList(children);
         } catch (Exception e) {
             Log.e(TAG, "Error loading children: " + e.getMessage());
             Toast.makeText(this, "Çocuklar yüklenirken hata oluştu", Toast.LENGTH_SHORT).show();
