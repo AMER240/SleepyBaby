@@ -9,6 +9,8 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
@@ -33,12 +35,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Veritabanında çocuk var mı kontrol et
-        DatabaseHelper db = new DatabaseHelper(this);
-        if (!db.getAllChildren().isEmpty()) {
-            // Çocuk varsa direkt çocuklar listesine git
-            startActivity(new Intent(this, ChildrenListActivity.class));
-            finish();
+        try {
+            Log.d(TAG, "onResume called, checking for existing children...");
+            // Veritabanında çocuk var mı kontrol et
+            DatabaseHelper db = new DatabaseHelper(this);
+            List<Child> children = db.getAllChildren();
+            Log.d(TAG, "Found " + children.size() + " children in database");
+            
+            if (!children.isEmpty()) {
+                Log.d(TAG, "Children found, navigating to ChildrenListActivity");
+                // Çocuk varsa direkt çocuklar listesine git
+                startActivity(new Intent(this, ChildrenListActivity.class));
+                finish();
+            } else {
+                Log.d(TAG, "No children found, staying on MainActivity");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error in onResume: " + e.getMessage());
+            e.printStackTrace();
+            Toast.makeText(this, "Çocuklar yüklenirken hata oluştu: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 }

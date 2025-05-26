@@ -128,26 +128,57 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Tüm çocukları getir
     public List<Child> getAllChildren() {
         List<Child> childList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_CHILDREN, null);
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        
+        try {
+            Log.d(TAG, "Starting getAllChildren method...");
+            db = this.getReadableDatabase();
+            Log.d(TAG, "Database opened for reading");
+            
+            cursor = db.rawQuery("SELECT * FROM " + TABLE_CHILDREN, null);
+            Log.d(TAG, "Query executed, cursor count: " + cursor.getCount());
 
-        if (cursor.moveToFirst()) {
-            do {
-                Child child = new Child();
-                child.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)));
-                child.setName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME)));
-                child.setBirthDate(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_BIRTH_DATE)));
-                child.setGender(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GENDER)));
-                child.setSleepHour(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SLEEP_HOUR)));
-                child.setSleepMinute(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SLEEP_MINUTE)));
-                child.setWakeHour(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_WAKE_HOUR)));
-                child.setWakeMinute(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_WAKE_MINUTE)));
-                childList.add(child);
-            } while (cursor.moveToNext());
+            if (cursor.moveToFirst()) {
+                do {
+                    try {
+                        Child child = new Child();
+                        child.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)));
+                        child.setName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME)));
+                        child.setBirthDate(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_BIRTH_DATE)));
+                        child.setGender(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GENDER)));
+                        child.setSleepHour(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SLEEP_HOUR)));
+                        child.setSleepMinute(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SLEEP_MINUTE)));
+                        child.setWakeHour(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_WAKE_HOUR)));
+                        child.setWakeMinute(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_WAKE_MINUTE)));
+                        childList.add(child);
+                        Log.d(TAG, "Child added: " + child.getName() + " (ID: " + child.getId() + ")");
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error processing child record: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                } while (cursor.moveToNext());
+            } else {
+                Log.d(TAG, "No children found in database");
+            }
+            
+            Log.d(TAG, "getAllChildren completed successfully, returning " + childList.size() + " children");
+            return childList;
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Exception in getAllChildren: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+            Log.e(TAG, "Stack trace: ", e);
+            return new ArrayList<>(); // Boş liste döndür
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+                Log.d(TAG, "Cursor closed");
+            }
+            if (db != null && db.isOpen()) {
+                db.close();
+                Log.d(TAG, "Database closed");
+            }
         }
-        cursor.close();
-        db.close();
-        return childList;
     }
 
     // Çocuk silme
