@@ -25,6 +25,8 @@
             android:layout_marginBottom="16dp">
             <EditText
                 android:id="@+id/editTextName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:hint="Çocuk Adı"
                 android:inputType="textPersonName"/>
         </com.google.android.material.textfield.TextInputLayout>
@@ -35,6 +37,8 @@
             android:layout_marginBottom="16dp">
             <EditText
                 android:id="@+id/editTextBirthYear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:hint="Doğum Yılı (örn: 2018)"
                 android:inputType="number"/>
         </com.google.android.material.textfield.TextInputLayout>
@@ -45,6 +49,8 @@
             android:layout_marginBottom="16dp">
             <EditText
                 android:id="@+id/editTextGender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:hint="Cinsiyet (örn: Erkek/Kız)"
                 android:inputType="text"/>
         </com.google.android.material.textfield.TextInputLayout>
