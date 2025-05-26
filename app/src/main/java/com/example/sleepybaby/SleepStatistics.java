@@ -10,6 +10,7 @@ public class SleepStatistics {
     private double averageSleepQuality;
     private long longestSleepMinutes;
     private long shortestSleepMinutes;
+    private int totalRecords;
 
     public SleepStatistics(long childId, Date date) {
         this.childId = childId;
@@ -19,6 +20,7 @@ public class SleepStatistics {
         this.averageSleepQuality = 0;
         this.longestSleepMinutes = 0;
         this.shortestSleepMinutes = Long.MAX_VALUE;
+        this.totalRecords = 0;
     }
 
     // Getters and Setters
@@ -43,6 +45,10 @@ public class SleepStatistics {
     public long getShortestSleepMinutes() { return shortestSleepMinutes; }
     public void setShortestSleepMinutes(long shortestSleepMinutes) { this.shortestSleepMinutes = shortestSleepMinutes; }
 
+    public int getTotalRecords() {
+        return totalRecords;
+    }
+
     // Uyku kaydı ekleme ve istatistikleri güncelleme
     public void addSleepRecord(SleepRecord record) {
         long duration = record.getDurationInMinutes();
@@ -59,6 +65,7 @@ public class SleepStatistics {
         
         // Ortalama uyku kalitesini güncelle
         averageSleepQuality = ((averageSleepQuality * (numberOfSleeps - 1)) + record.getQuality()) / numberOfSleeps;
+        totalRecords++;
     }
 
     // Ortalama uyku süresini hesapla
