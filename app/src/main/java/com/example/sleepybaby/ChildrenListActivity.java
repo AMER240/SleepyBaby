@@ -6,6 +6,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import android.util.Log;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,7 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChildrenListActivity extends AppCompatActivity implements ChildrenAdapter.OnChildClickListener {
+public class ChildrenListActivity extends AppCompatActivity implements ChildrenAdapter.OnChildClickListener, ChildrenAdapter.OnChildDeleteListener {
     private static final String TAG = "ChildrenListActivity";
     private RecyclerView recyclerViewChildren;
     private ChildrenAdapter childrenAdapter;
@@ -38,6 +39,7 @@ public class ChildrenListActivity extends AppCompatActivity implements ChildrenA
             recyclerViewChildren.setLayoutManager(new LinearLayoutManager(this));
             childrenAdapter = new ChildrenAdapter(new ArrayList<>());
             childrenAdapter.setOnChildClickListener(this);
+            childrenAdapter.setOnChildDeleteListener(this);
             recyclerViewChildren.setAdapter(childrenAdapter);
             Log.d(TAG, "RecyclerView setup completed");
 
@@ -99,6 +101,30 @@ public class ChildrenListActivity extends AppCompatActivity implements ChildrenA
         Intent intent = new Intent(this, ChildDetailActivity.class);
         intent.putExtra("child_id", child.getId());
         startActivity(intent);
+    }
+
+    @Override
+    public void onChildDelete(Child child, int position) {
+        // Silme onayı dialog'u göster
+        new AlertDialog.Builder(this)
+                .setTitle("Çocuğu Sil")
+                .setMessage(child.getName() + " adlı çocuğu silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz ve tüm uyku kayıtları da silinecektir.")
+                .setPositiveButton("Sil", (dialog, which) -> {
+                    try {
+                        boolean success = databaseHelper.deleteChild(child.getId());
+                        if (success) {
+                            Toast.makeText(this, child.getName() + " başarıyla silindi", Toast.LENGTH_SHORT).show();
+                            loadChildrenFromDatabase(); // Listeyi yenile
+                        } else {
+                            Toast.makeText(this, "Çocuk silinirken hata oluştu", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error deleting child: " + e.getMessage());
+                        Toast.makeText(this, "Silme işlemi sırasında hata: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setNegativeButton("İptal", null)
+                .show();
     }
 
     @Override

@@ -61,7 +61,7 @@
         android:id="@+id/buttonViewChildren"
         android:layout_width="280dp"
         android:layout_height="80dp"
-        android:text="Çocukları Görüntüle"
+        android:text="Çocuklar"
         android:textSize="20sp"
         android:textStyle="bold"
         android:backgroundTint="#2196F3"
