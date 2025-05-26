@@ -30,6 +30,21 @@
         <activity android:name=".ThreadActivity" />
         <activity android:name=".AddChildActivity" />
         <activity android:name=".ScheduleActivity" />
+        <activity android:name=".AddSleepRecordActivity" />
+
+        <activity
+            android:name=".ChildrenListActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ChildDetailActivity"
+            android:exported="false" />
+
+        <!-- Bildirim alıcısı -->
+        <receiver
+            android:name=".NotificationReceiver"
+            android:enabled="true"
+            android:exported="false" />
 
         <!-- Bildirim alıcısı -->
         <receiver
