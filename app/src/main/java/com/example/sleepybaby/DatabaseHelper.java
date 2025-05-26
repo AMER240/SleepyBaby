@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,6 +14,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+    private static final String TAG = "DatabaseHelper";
     private static final String DATABASE_NAME = "sleepyBaby.db";
     private static final int DATABASE_VERSION = 1;
 
@@ -100,19 +102,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Çocuk ekleme
     public boolean addChild(String name, long birthDate, String gender, int sleepHour, int sleepMinute, int wakeHour, int wakeMinute) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_NAME, name);
-        values.put(COLUMN_BIRTH_DATE, birthDate);
-        values.put(COLUMN_GENDER, gender);
-        values.put(COLUMN_SLEEP_HOUR, sleepHour);
-        values.put(COLUMN_SLEEP_MINUTE, sleepMinute);
-        values.put(COLUMN_WAKE_HOUR, wakeHour);
-        values.put(COLUMN_WAKE_MINUTE, wakeMinute);
+        SQLiteDatabase db = null;
+        try {
+            db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_NAME, name);
+            values.put(COLUMN_BIRTH_DATE, birthDate);
+            values.put(COLUMN_GENDER, gender);
+            values.put(COLUMN_SLEEP_HOUR, sleepHour);
+            values.put(COLUMN_SLEEP_MINUTE, sleepMinute);
+            values.put(COLUMN_WAKE_HOUR, wakeHour);
+            values.put(COLUMN_WAKE_MINUTE, wakeMinute);
 
-        long result = db.insert(TABLE_CHILDREN, null, values);
-        db.close();
-        return result != -1;
+            Log.d(TAG, "Adding child: " + name + ", birthDate: " + birthDate + ", gender: " + gender);
+            
+            long result = db.insert(TABLE_CHILDREN, null, values);
+            Log.d(TAG, "Insert result: " + result);
+            
+            return result != -1;
+        } catch (Exception e) {
+            Log.e(TAG, "Error adding child: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (db != null && db.isOpen()) {
+                db.close();
+            }
+        }
     }
 
     // Tüm çocukları getir
