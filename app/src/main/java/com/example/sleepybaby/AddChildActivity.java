@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class AddChildActivity extends AppCompatActivity {
     EditText editTextName;
-    EditText editTextAge;
     EditText editTextBirthYear;
     EditText editTextGender;
     TimePicker timePickerSleep;
@@ -25,7 +24,6 @@ public class AddChildActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_child);
 
         editTextName = findViewById(R.id.editTextName);
-        editTextAge = findViewById(R.id.editTextAge);
         editTextBirthYear = findViewById(R.id.editTextBirthYear);
         editTextGender = findViewById(R.id.editTextGender);
 
@@ -40,16 +38,11 @@ public class AddChildActivity extends AppCompatActivity {
 
         buttonSaveChild.setOnClickListener(v -> {
             String name = editTextName.getText().toString().trim();
-            String ageStr = editTextAge.getText().toString().trim();
             String birthYearStr = editTextBirthYear.getText().toString().trim();
             String gender = editTextGender.getText().toString().trim();
 
             if (name.isEmpty()) {
                 editTextName.setError("İsim gerekli");
-                return;
-            }
-            if (ageStr.isEmpty()) {
-                editTextAge.setError("Yaş gerekli");
                 return;
             }
             if (birthYearStr.isEmpty()) {
@@ -61,7 +54,6 @@ public class AddChildActivity extends AppCompatActivity {
                 return;
             }
 
-            int age = Integer.parseInt(ageStr);
             long birthYear = Long.parseLong(birthYearStr);
             int sleepHour = timePickerSleep.getHour();
             int sleepMinute = timePickerSleep.getMinute();
