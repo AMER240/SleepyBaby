@@ -1,5 +1,6 @@
 package com.example.sleepybaby;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -80,7 +81,8 @@ public class ChildDetailActivity extends AppCompatActivity {
 
             // Uyku kaydı ekleme butonu
             fabAddSleepRecord.setOnClickListener(v -> {
-                // TODO: Uyku kaydı ekleme aktivitesini başlat
+                Intent intent = new Intent(this, AddSleepRecordActivity.class);
+                startActivity(intent);
             });
 
         } catch (Exception e) {

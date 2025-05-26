@@ -46,8 +46,9 @@ public class ChildrenListActivity extends AppCompatActivity implements ChildrenA
 
             // Uyku kaydı ekleme butonu
             fabAddSleepRecord.setOnClickListener(v -> {
-                // TODO: Uyku kaydı ekleme aktivitesini başlat
-                Log.d(TAG, "FAB clicked");
+                Log.d(TAG, "FAB clicked - starting AddSleepRecordActivity");
+                Intent intent = new Intent(this, AddSleepRecordActivity.class);
+                startActivity(intent);
             });
             
             Log.d(TAG, "ChildrenListActivity onCreate completed successfully");
