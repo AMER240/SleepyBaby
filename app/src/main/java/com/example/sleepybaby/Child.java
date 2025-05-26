@@ -3,14 +3,14 @@ package com.example.sleepybaby;
 public class Child {
     private int id;
     private String name;
-    private int age;
+    private long birthDate;
+    private String gender;
     private int sleepHour;
     private int sleepMinute;
     private int wakeHour;
     private int wakeMinute;
 
 // Getter and Setter methods
-
 
     public int getId() {
         return id;
@@ -24,11 +24,17 @@ public class Child {
     public void setName(String name) {
         this.name = name;
     }
-    public int getAge() {
-        return age;
+    public long getBirthDate() {
+        return birthDate;
     }
-    public void setAge(int age) {
-        this.age = age;
+    public void setBirthDate(long birthDate) {
+        this.birthDate = birthDate;
+    }
+    public String getGender() {
+        return gender;
+    }
+    public void setGender(String gender) {
+        this.gender = gender;
     }
     public int getSleepHour() {
         return sleepHour;

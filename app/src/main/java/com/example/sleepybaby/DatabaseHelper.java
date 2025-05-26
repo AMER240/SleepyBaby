@@ -99,11 +99,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Çocuk ekleme
-    public boolean addChild(String name, int age, int sleepHour, int sleepMinute, int wakeHour, int wakeMinute) {
+    public boolean addChild(String name, long birthDate, String gender, int sleepHour, int sleepMinute, int wakeHour, int wakeMinute) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME, name);
-        values.put(COLUMN_BIRTH_DATE, birthDate.getTime());
+        values.put(COLUMN_BIRTH_DATE, birthDate);
         values.put(COLUMN_SLEEP_HOUR, sleepHour);
         values.put(COLUMN_SLEEP_MINUTE, sleepMinute);
         values.put(COLUMN_WAKE_HOUR, wakeHour);
