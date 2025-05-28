@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, AddChildActivity.class);
                 startActivity(intent);
             });
-
+            
             MaterialButton buttonViewChildren = findViewById(R.id.buttonViewChildren);
             buttonViewChildren.setOnClickListener(v -> {
                 Log.d(TAG, "View children button clicked");
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             DatabaseHelper db = new DatabaseHelper(this);
             List<Child> children = db.getAllChildren();
             Log.d(TAG, "Found " + children.size() + " children in database");
-
+            
             // Geçici olarak otomatik yönlendirmeyi devre dışı bırak
             /*
             if (!children.isEmpty()) {
