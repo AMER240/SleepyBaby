@@ -85,10 +85,10 @@ public class Child {
     public int getAge() {
         java.util.Calendar now = java.util.Calendar.getInstance();
         int currentYear = now.get(java.util.Calendar.YEAR);
-
+        
         // birthDate bir yıl değeri olarak saklanıyor
         int birthYear = (int) birthDate;
-
+        
         return currentYear - birthYear;
     }
 }
