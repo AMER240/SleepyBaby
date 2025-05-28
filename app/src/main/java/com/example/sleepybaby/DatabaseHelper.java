@@ -30,14 +30,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_SLEEP_MINUTE = "sleep_minute";
     public static final String COLUMN_WAKE_HOUR = "wake_hour";
     public static final String COLUMN_WAKE_MINUTE = "wake_minute";
-
+    
     // SleepRecord tablosu için kolonlar
     public static final String COLUMN_CHILD_ID = "childId";
     public static final String COLUMN_START_TIME = "startTime";
     public static final String COLUMN_END_TIME = "endTime";
     public static final String COLUMN_QUALITY = "quality";
     public static final String COLUMN_NOTES = "notes";
-
+    
     // SleepStatistics tablosu için kolonlar
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_TOTAL_SLEEP_MINUTES = "totalSleepMinutes";
@@ -87,10 +87,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.d(TAG, "Starting addChild method...");
             Log.d(TAG, "Parameters - Name: '" + name + "', BirthDate: " + birthDate + ", Gender: '" + gender + "'");
             Log.d(TAG, "Sleep time: " + sleepHour + ":" + sleepMinute + ", Wake time: " + wakeHour + ":" + wakeMinute);
-
+            
             db = this.getWritableDatabase();
             Log.d(TAG, "Database opened successfully");
-
+            
             ContentValues values = new ContentValues();
             values.put(COLUMN_NAME, name);
             values.put(COLUMN_BIRTH_DATE, birthDate);
@@ -99,12 +99,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_SLEEP_MINUTE, sleepMinute);
             values.put(COLUMN_WAKE_HOUR, wakeHour);
             values.put(COLUMN_WAKE_MINUTE, wakeMinute);
-
+            
             Log.d(TAG, "ContentValues created: " + values.toString());
-
+            
             long result = db.insert(TABLE_CHILDREN, null, values);
             Log.d(TAG, "Insert result: " + result);
-
+            
             if (result == -1) {
                 Log.e(TAG, "Insert failed - result is -1");
                 return false;
@@ -112,7 +112,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Log.d(TAG, "Insert successful - new row ID: " + result);
                 return true;
             }
-
+            
         } catch (Exception e) {
             Log.e(TAG, "Exception in addChild: " + e.getClass().getSimpleName() + " - " + e.getMessage());
             Log.e(TAG, "Stack trace: ", e);
@@ -130,12 +130,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Child> childList = new ArrayList<>();
         SQLiteDatabase db = null;
         Cursor cursor = null;
-
+        
         try {
             Log.d(TAG, "Starting getAllChildren method...");
             db = this.getReadableDatabase();
             Log.d(TAG, "Database opened for reading");
-
+            
             cursor = db.rawQuery("SELECT * FROM " + TABLE_CHILDREN, null);
             Log.d(TAG, "Query executed, cursor count: " + cursor.getCount());
 
@@ -161,10 +161,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } else {
                 Log.d(TAG, "No children found in database");
             }
-
+            
             Log.d(TAG, "getAllChildren completed successfully, returning " + childList.size() + " children");
             return childList;
-
+            
         } catch (Exception e) {
             Log.e(TAG, "Exception in getAllChildren: " + e.getClass().getSimpleName() + " - " + e.getMessage());
             Log.e(TAG, "Stack trace: ", e);
@@ -188,7 +188,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return deletedRows > 0;
     }
-
+    
     // Uyku kaydı ekleme
     public long addSleepRecord(SleepRecord record) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -199,7 +199,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("sleep_quality", record.getSleepQuality());
         return db.insert("sleep_records", null, values);
     }
-
+    
     // Çocuğun uyku kayıtlarını getirme
     public List<SleepRecord> getSleepRecords(int childId) {
         List<SleepRecord> records = new ArrayList<>();
@@ -213,11 +213,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 SleepRecord record = new SleepRecord(
-                        cursor.getInt(0),
-                        cursor.getInt(1),
-                        new Date(cursor.getLong(2)),
-                        new Date(cursor.getLong(3)),
-                        cursor.getInt(4)
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    new Date(cursor.getLong(2)),
+                    new Date(cursor.getLong(3)),
+                    cursor.getInt(4)
                 );
                 records.add(record);
             } while (cursor.moveToNext());
@@ -225,7 +225,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return records;
     }
-
+    
     // Belirli bir tarihten sonraki uyku istatistiklerini getirme
     public SleepStatistics getSleepStatistics(int childId, Date startDate) {
         SQLiteDatabase db = this.getReadableDatabase();
