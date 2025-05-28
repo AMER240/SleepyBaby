@@ -24,4 +24,4 @@ public class SleepStatistics {
     public int getTotalRecords() {
         return totalRecords;
     }
-}
+} 
