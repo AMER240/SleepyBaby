@@ -40,6 +40,6 @@ public class SleepRecord {
     // Uyku süresini dakika cinsinden hesapla
     public long getDurationInMinutes() {
         if (sleepTime == null || wakeTime == null) return 0;
-        return (wakeTime.getTime() - sleepTime.getTime()) / (60 * 1000)
+        return (wakeTime.getTime() - sleepTime.getTime()) / (60 * 1000);
     }
 } 
