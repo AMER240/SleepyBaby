@@ -42,4 +42,4 @@ public class SleepRecord {
         if (sleepTime == null || wakeTime == null) return 0;
         return (wakeTime.getTime() - sleepTime.getTime()) / (60 * 1000);
     }
-} 
+}

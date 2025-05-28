@@ -1,15 +1,64 @@
+# Built files
+*.apk
+*.ap_
+*.aar
+*.jar
+*.class
+*.dex
+*.keystore
+captures/
+
+# Files for the ART/Dalvik VM
+*.odex
+*.vdex
+*.art
+
+# Gradle files
+.gradle/
+/build/
+!/gradle/wrapper/gradle-wrapper.jar
+
+# IDEs
+.idea/
+!.idea/modules.xml
+!.idea/deploymentTargetDb.xml
+!.idea/workspace.xml
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+*.iws
+*.ipr
+
+# Android Studio
+*.log
+*.pyc
+*.tmp
+*/build/
+externalNativeBuild/
+
+# Local configuration file (sdk path, etc.)
 local.properties
+
+# NDK
+obj/
+
+# User-specific configurations
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Environment variable override
+.env
+
+# SonarQube
+/.sonar/
+/sonar-report.json
+
+# Keystores
+*.jks
+*.keystore
+
+# Mac/Linux system files
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.\#*
