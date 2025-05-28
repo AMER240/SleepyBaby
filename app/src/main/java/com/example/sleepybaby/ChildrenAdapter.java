@@ -52,7 +52,7 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ChildV
         Child child = childList.get(position);
         holder.textViewName.setText(child.getName());
         holder.textViewAge.setText(child.getAge() + " yaşında");
-
+        
         holder.itemView.setOnClickListener(v -> {
             if (clickListener != null) {
                 clickListener.onChildClick(child);
