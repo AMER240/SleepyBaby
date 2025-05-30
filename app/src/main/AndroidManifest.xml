@@ -52,13 +52,6 @@
             android:enabled="true"
             android:exported="false" />
 
-    <receiver
-        android:name=".NotificationReceiver"
-        android:enabled="true"
-        android:exported="false">
-        <intent-filter>
-            <action android:name="com.example.sleepybaby.ACTION_SHOW_ALARM" />
-        </intent-filter>
-    </receiver>
-</application>
+    </application>
+
 </manifest>
