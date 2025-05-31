@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat;
 
 public class NotificationReceiver extends BroadcastReceiver {
     private static final String CHANNEL_ID = "SleepyBabyChannel";
-
+    
     @Override
     public void onReceive(Context context, Intent intent) {
         long childId = intent.getLongExtra("childId", -1);
@@ -21,7 +21,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             return;
         }
         
-        android.app.NotificationManager notificationManager = (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         
         String title;
         String content;
@@ -45,4 +45,4 @@ public class NotificationReceiver extends BroadcastReceiver {
         
         notificationManager.notify((int) childId, builder.build());
     }
-}
+} 
