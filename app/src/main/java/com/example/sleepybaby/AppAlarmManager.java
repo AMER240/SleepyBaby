@@ -72,6 +72,14 @@ public class AppAlarmManager {
                 return false;
             }
 
+            // İzinleri kontrol et
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (!alarmManager.canScheduleExactAlarms()) {
+                    Log.e(TAG, "SCHEDULE_EXACT_ALARM permission not granted");
+                    return false;
+                }
+            }
+
             Intent intent = new Intent(context, AlarmReceiver.class);
             intent.setAction("com.example.sleepybaby.ALARM_TRIGGER");
             intent.putExtra("ALARM_ID", alarmId);
@@ -98,44 +106,18 @@ public class AppAlarmManager {
             // إذا كان الوقت قد مر، اضبط المنبه لليوم التالي
             if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
+                Log.d(TAG, "Alarm time has passed, setting for next day: " + calendar.getTime().toString());
             }
 
             long triggerTime = calendar.getTimeInMillis();
             Log.d(TAG, "Setting alarm for: " + calendar.getTime().toString());
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (alarmManager.canScheduleExactAlarms()) {
-                    // استخدام setAlarmClock لضمان استيقاظ الجهاز
-                    alarmManager.setAlarmClock(
-                        new AlarmManager.AlarmClockInfo(triggerTime, pendingIntent),
-                        pendingIntent
-                    );
-                    Log.d(TAG, "Alarm set using setAlarmClock for Android 12+");
-                } else {
-                    // إذا لم يكن لدينا إذن للمنبهات الدقيقة، نستخدم setAndAllowWhileIdle
-                    alarmManager.setAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        triggerTime,
-                        pendingIntent
-                    );
-                    Log.d(TAG, "Alarm set using setAndAllowWhileIdle (fallback) for Android 12+");
-                }
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                // لأندرويد 6 وما فوق
-                alarmManager.setAlarmClock(
-                    new AlarmManager.AlarmClockInfo(triggerTime, pendingIntent),
-                    pendingIntent
-                );
-                Log.d(TAG, "Alarm set using setAlarmClock for Android 6+");
-            } else {
-                // للإصدارات القديمة
-                alarmManager.setExact(
-                    AlarmManager.RTC_WAKEUP,
-                    triggerTime,
-                    pendingIntent
-                );
-                Log.d(TAG, "Alarm set using setExact for older Android versions");
-            }
+            // Her zaman setAlarmClock kullan
+            alarmManager.setAlarmClock(
+                new AlarmManager.AlarmClockInfo(triggerTime, pendingIntent),
+                pendingIntent
+            );
+            Log.d(TAG, "Alarm set successfully using setAlarmClock");
             
             return true;
         } catch (Exception e) {

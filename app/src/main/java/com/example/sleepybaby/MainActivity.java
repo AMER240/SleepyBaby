@@ -12,6 +12,7 @@ import android.provider.Settings;
 import android.os.Build;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.annotation.NonNull;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
@@ -27,77 +28,58 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        try {
-            // طلب الأذونات المطلوبة
-            requestRequiredPermissions();
+        // İzinleri kontrol et
+        checkAndRequestPermissions();
 
-            MaterialButton buttonAddChild = findViewById(R.id.buttonAddChild);
-            buttonAddChild.setOnClickListener(v -> {
-                Log.d(TAG, "Add child button clicked");
-                Intent intent = new Intent(MainActivity.this, AddChildActivity.class);
-                startActivity(intent);
-            });
-            
-            MaterialButton buttonViewChildren = findViewById(R.id.buttonViewChildren);
-            buttonViewChildren.setOnClickListener(v -> {
-                Log.d(TAG, "View children button clicked");
-                Intent intent = new Intent(MainActivity.this, ChildrenListActivity.class);
-                startActivity(intent);
-            });
-        } catch (Exception e) {
-            Log.e(TAG, "Error in onCreate: " + e.getMessage());
-            Toast.makeText(this, "حدث خطأ أثناء بدء التطبيق", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void requestRequiredPermissions() {
-        // التحقق من أذونات الإشعارات
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                    PERMISSION_REQUEST_CODE);
-            }
-        }
-
-        // التحقق من إذن المنبهات الدقيقة
+        // AlarmManager izinlerini kontrol et
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
             if (!alarmManager.canScheduleExactAlarms()) {
+                // Kullanıcıyı ayarlara yönlendir
                 Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
                 startActivity(intent);
             }
         }
 
-        // طلب الأذونات الأخرى
-        String[] permissions = {
-            Manifest.permission.WAKE_LOCK,
-            Manifest.permission.VIBRATE,
-            Manifest.permission.RECEIVE_BOOT_COMPLETED
-        };
+        // View'ları initialize et
+        MaterialButton buttonAddChild = findViewById(R.id.buttonAddChild);
+        MaterialButton buttonViewChildren = findViewById(R.id.buttonViewChildren);
 
-        for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(this, permission)
-                != PackageManager.PERMISSION_GRANTED) {
+        // Çocuk ekleme butonu
+        buttonAddChild.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AddChildActivity.class);
+            startActivity(intent);
+        });
+
+        // Çocukları görüntüleme butonu
+        buttonViewChildren.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ChildrenListActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    private void checkAndRequestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
-                    new String[]{permission},
-                    PERMISSION_REQUEST_CODE);
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS},
+                        PERMISSION_REQUEST_CODE);
             }
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                         @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            for (int i = 0; i < permissions.length; i++) {
-                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                    Log.w(TAG, "Permission not granted: " + permissions[i]);
-                    Toast.makeText(this, 
-                        "بعض الميزات قد لا تعمل بشكل صحيح بدون الأذونات المطلوبة",
-                        Toast.LENGTH_LONG).show();
-                }
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // İzin verildi
+                Toast.makeText(this, "Bildirim izni verildi", Toast.LENGTH_SHORT).show();
+            } else {
+                // İzin reddedildi
+                Toast.makeText(this, "Bildirim izni reddedildi", Toast.LENGTH_SHORT).show();
             }
         }
     }
