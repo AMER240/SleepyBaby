@@ -23,6 +23,7 @@
             android:contentDescription="Geri" />
 
         <TextView
+            android:id="@+id/textViewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -38,28 +39,40 @@
         android:layout_marginTop="24dp"
         android:orientation="vertical">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonSelectDate"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Tarih Seç"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonSleepTime"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="Uyku Saati Seç"
-            android:textAllCaps="false" />
+            android:layout_height="56dp"
+            android:text="Uyku Saatini Seç"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonWakeTime"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:text="Uyanma Saati Seç"
-            android:textAllCaps="false" />
+            android:layout_height="56dp"
+            android:text="Uyanma Saatini Seç"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonSave"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:text="Kaydet"
-            android:textAllCaps="false" />
+            android:textSize="16sp"
+            style="@style/Widget.MaterialComponents.Button"/>
 
     </LinearLayout>
 

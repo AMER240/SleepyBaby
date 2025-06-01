@@ -16,7 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
     private static final String DATABASE_NAME = "sleepyBaby.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     public static final String TABLE_CHILDREN = "children";
     public static final String TABLE_SLEEP_RECORDS = "sleep_records";
@@ -79,12 +79,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Eski tabloları sil
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SLEEP_RECORDS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILDREN);
+        if (oldVersion < 4) {
+            // Eski tabloları sil
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SLEEP_RECORDS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILDREN);
 
-        // Tabloları yeniden oluştur
-        onCreate(db);
+            // Tabloları yeniden oluştur
+            onCreate(db);
+        }
     }
 
     // Çocuk ekleme
@@ -203,7 +205,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         values.put(COLUMN_CHILD_ID, record.getChildId());
         values.put(COLUMN_SLEEP_TIME, record.getSleepTime().getTime());
-        values.put(COLUMN_WAKE_TIME, record.getEndTime().getTime());
+        
+        // Uyanma zamanını hesapla
+        Calendar wakeCalendar = Calendar.getInstance();
+        wakeCalendar.setTime(record.getSleepTime());
+        wakeCalendar.set(Calendar.HOUR_OF_DAY, record.getWakeHour());
+        wakeCalendar.set(Calendar.MINUTE, record.getWakeMinute());
+        wakeCalendar.set(Calendar.SECOND, 0);
+        
+        // Eğer uyanma saati uyku saatinden önceyse, ertesi güne geç
+        Calendar sleepCalendar = Calendar.getInstance();
+        sleepCalendar.setTime(record.getSleepTime());
+        sleepCalendar.set(Calendar.HOUR_OF_DAY, record.getSleepHour());
+        sleepCalendar.set(Calendar.MINUTE, record.getSleepMinute());
+        sleepCalendar.set(Calendar.SECOND, 0);
+        
+        if (wakeCalendar.before(sleepCalendar)) {
+            wakeCalendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        
+        values.put(COLUMN_WAKE_TIME, wakeCalendar.getTimeInMillis());
         values.put(COLUMN_SLEEP_QUALITY, record.getQuality());
         values.put(COLUMN_NOTES, record.getNotes());
 
@@ -257,6 +278,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     wakeCalendar.setTime(wakeTime);
                     
                     record.setSleepTime(sleepTime);
+                    record.setWakeTime(wakeTime);
                     record.setSleepHour(sleepCalendar.get(Calendar.HOUR_OF_DAY));
                     record.setSleepMinute(sleepCalendar.get(Calendar.MINUTE));
                     record.setWakeHour(wakeCalendar.get(Calendar.HOUR_OF_DAY));
@@ -357,46 +379,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int count = 0;
 
         try {
-            String query = "SELECT sleep_hour, sleep_minute, wake_hour, wake_minute " +
-                          "FROM sleep_records " +
-                          "WHERE child_id = ? AND sleep_time >= datetime('now', ?) " +
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, -days);
+            long startDate = calendar.getTimeInMillis();
+
+            String query = "SELECT sleep_time, wake_time FROM " + TABLE_SLEEP_RECORDS +
+                          " WHERE " + COLUMN_CHILD_ID + " = ? AND sleep_time >= ? " +
                           "ORDER BY sleep_time DESC";
 
-            String timeOffset = "-" + days + " days";
-            Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(childId), timeOffset});
+            Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(childId), String.valueOf(startDate)});
 
             if (cursor.moveToFirst()) {
                 do {
-                    int sleepHour = cursor.getInt(0);
-                    int sleepMinute = cursor.getInt(1);
-                    int wakeHour = cursor.getInt(2);
-                    int wakeMinute = cursor.getInt(3);
-
-                    if (sleepHour != -1 && sleepMinute != -1 && wakeHour != -1 && wakeMinute != -1) {
-                        double sleepTime = calculateSleepDuration(sleepHour, sleepMinute, wakeHour, wakeMinute);
-                        totalHours += sleepTime;
-                        count++;
-                    }
+                    long sleepTime = cursor.getLong(0);
+                    long wakeTime = cursor.getLong(1);
+                    
+                    // Uyku süresini hesapla (saat cinsinden)
+                    double duration = (wakeTime - sleepTime) / (60.0 * 60.0 * 1000.0);
+                    totalHours += duration;
+                    count++;
                 } while (cursor.moveToNext());
             }
             cursor.close();
         } catch (Exception e) {
+            Log.e(TAG, "Error in getAverageSleepHours: " + e.getMessage());
             e.printStackTrace();
         }
 
         return count > 0 ? totalHours / count : 0;
-    }
-
-    private double calculateSleepDuration(int sleepHour, int sleepMinute, int wakeHour, int wakeMinute) {
-        int sleepTotalMinutes = sleepHour * 60 + sleepMinute;
-        int wakeTotalMinutes = wakeHour * 60 + wakeMinute;
-        
-        // Eğer uyanma saati uyku saatinden küçükse, ertesi güne geçmiş demektir
-        if (wakeTotalMinutes < sleepTotalMinutes) {
-            wakeTotalMinutes += 24 * 60; // 24 saat ekle
-        }
-        
-        return (wakeTotalMinutes - sleepTotalMinutes) / 60.0;
     }
 
     // Ortalama uyku kalitesini hesaplama
@@ -407,8 +417,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long startDate = calendar.getTimeInMillis();
 
         Cursor cursor = db.query(TABLE_SLEEP_RECORDS,
-                new String[]{"sleep_quality"},
-                "child_id = ? AND sleep_time >= ?",
+                new String[]{COLUMN_SLEEP_QUALITY},
+                COLUMN_CHILD_ID + " = ? AND " + COLUMN_SLEEP_TIME + " >= ?",
                 new String[]{String.valueOf(childId), String.valueOf(startDate)},
                 null, null, null);
 

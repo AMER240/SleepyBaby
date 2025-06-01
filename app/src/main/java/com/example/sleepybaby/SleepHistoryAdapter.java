@@ -35,10 +35,9 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         SleepRecord record = sleepRecords.get(position);
-        holder.textViewDate.setText(dateFormat.format(record.getStartTime()));
-        holder.textViewTime.setText(String.format("%s - %s",
-            timeFormat.format(record.getStartTime()),
-            timeFormat.format(record.getEndTime())));
+        holder.textViewDate.setText(dateFormat.format(record.getSleepTime()));
+        holder.textViewStartTime.setText(timeFormat.format(record.getSleepTime()));
+        holder.textViewEndTime.setText(timeFormat.format(record.getWakeTime()));
 
         // Uyku kalitesi
         int quality = record.getQuality();
@@ -55,7 +54,7 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
         holder.textViewQuality.setText("Kalite: " + qualityText);
 
         // Uyku süresi
-        long durationMinutes = record.getDurationMinutes();
+        long durationMinutes = (record.getWakeTime().getTime() - record.getSleepTime().getTime()) / (60 * 1000);
         int hours = (int) (durationMinutes / 60);
         int minutes = (int) (durationMinutes % 60);
         holder.textViewDuration.setText(String.format("Süre: %d saat %d dakika", hours, minutes));
@@ -81,7 +80,8 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textViewDate;
-        TextView textViewTime;
+        TextView textViewStartTime;
+        TextView textViewEndTime;
         TextView textViewQuality;
         TextView textViewDuration;
         TextView textViewNotes;
@@ -89,7 +89,8 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
         ViewHolder(View itemView) {
             super(itemView);
             textViewDate = itemView.findViewById(R.id.textViewDate);
-            textViewTime = itemView.findViewById(R.id.textViewTime);
+            textViewStartTime = itemView.findViewById(R.id.textViewStartTime);
+            textViewEndTime = itemView.findViewById(R.id.textViewEndTime);
             textViewQuality = itemView.findViewById(R.id.textViewQuality);
             textViewDuration = itemView.findViewById(R.id.textViewDuration);
             textViewNotes = itemView.findViewById(R.id.textViewNotes);

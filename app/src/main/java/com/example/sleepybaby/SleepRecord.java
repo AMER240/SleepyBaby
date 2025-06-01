@@ -7,6 +7,7 @@ public class SleepRecord {
     private int id;
     private int childId;
     private Date sleepTime;
+    private Date wakeTime;
     private int sleepHour;
     private int sleepMinute;
     private int wakeHour;
@@ -44,6 +45,14 @@ public class SleepRecord {
 
     public void setSleepTime(Date sleepTime) {
         this.sleepTime = sleepTime;
+    }
+
+    public Date getWakeTime() {
+        return wakeTime;
+    }
+
+    public void setWakeTime(Date wakeTime) {
+        this.wakeTime = wakeTime;
     }
 
     public int getSleepHour() {

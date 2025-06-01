@@ -102,12 +102,7 @@ public class ChildDetailActivity extends AppCompatActivity {
             loadSleepHistory();
 
             // Uyku kaydı ekleme butonu
-            fabAddSleepRecord.setOnClickListener(v -> {
-                Intent intent = new Intent(this, AddSleepRecordActivity.class);
-                intent.putExtra("child_id", childId);
-                intent.putExtra("child_name", child.getName());
-                startActivity(intent);
-            });
+            fabAddSleepRecord.setOnClickListener(v -> startAddSleepRecordActivity());
 
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreate: " + e.getMessage());
@@ -379,5 +374,21 @@ public class ChildDetailActivity extends AppCompatActivity {
         super.onResume();
         loadChildDetails();
         loadSleepHistory();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            // Uyku kaydı eklendiğinde detayları yenile
+            loadChildDetails();
+        }
+    }
+
+    private void startAddSleepRecordActivity() {
+        Intent intent = new Intent(this, AddSleepRecordActivity.class);
+        intent.putExtra("child_id", childId);
+        intent.putExtra("child_name", child.getName());
+        startActivityForResult(intent, 1);
     }
 } 
