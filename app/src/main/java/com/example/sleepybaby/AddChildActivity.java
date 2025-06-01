@@ -1,7 +1,11 @@
 package com.example.sleepybaby;
 
+import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
@@ -10,12 +14,22 @@ import android.widget.Toast;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class AddChildActivity extends AppCompatActivity {
     private static final String TAG = "AddChildActivity";
     
-    private EditText editTextName;
+    private TextInputEditText editTextName;
+    private TextInputEditText editTextBirthDate;
+    private AutoCompleteTextView autoCompleteGender;
+    private MaterialButton buttonSave;
     private NumberPicker numberPickerBirthYear;
     private RadioGroup radioGroupGender;
     private Button buttonSelectSleepTime;
@@ -28,11 +42,22 @@ public class AddChildActivity extends AppCompatActivity {
     private int wakeMinute = 0;
     
     private DatabaseHelper databaseHelper;
+    private Calendar selectedDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_child);
+
+        // Toolbar'ı ayarla
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
+        // Geri tuşu
+        findViewById(R.id.buttonBack).setOnClickListener(v -> onBackPressed());
 
         try {
             Log.d(TAG, "Initializing views...");
@@ -51,6 +76,9 @@ public class AddChildActivity extends AppCompatActivity {
     
     private void initializeViews() {
         editTextName = findViewById(R.id.editTextName);
+        editTextBirthDate = findViewById(R.id.editTextBirthDate);
+        autoCompleteGender = findViewById(R.id.autoCompleteGender);
+        buttonSave = findViewById(R.id.buttonSave);
         numberPickerBirthYear = findViewById(R.id.numberPickerBirthYear);
         radioGroupGender = findViewById(R.id.radioGroupGender);
         buttonSelectSleepTime = findViewById(R.id.buttonSelectSleepTime);
@@ -58,7 +86,19 @@ public class AddChildActivity extends AppCompatActivity {
         buttonSaveChild = findViewById(R.id.buttonSaveChild);
         
         databaseHelper = new DatabaseHelper(this);
+        selectedDate = Calendar.getInstance();
         Log.d(TAG, "Views initialized successfully");
+
+        // Cinsiyet seçeneklerini ayarla
+        String[] genders = {"Erkek", "Kız"};
+        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, genders);
+        autoCompleteGender.setAdapter(genderAdapter);
+
+        // Doğum tarihi seçici
+        editTextBirthDate.setOnClickListener(v -> showDatePicker());
+
+        // Kaydet butonu
+        buttonSave.setOnClickListener(v -> saveChild());
     }
     
     private void setupNumberPicker() {
@@ -121,25 +161,27 @@ public class AddChildActivity extends AppCompatActivity {
                     return;
                 }
                 
-                // Doğum yılı
-                long birthYear = numberPickerBirthYear.getValue();
+                // Doğum tarihi
+                String birthDate = editTextBirthDate.getText().toString().trim();
+                if (birthDate.isEmpty()) {
+                    Toast.makeText(this, "Doğum tarihi gerekli", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 
                 // Cinsiyet kontrolü
-                int selectedGenderId = radioGroupGender.getCheckedRadioButtonId();
-                if (selectedGenderId == -1) {
+                String gender = autoCompleteGender.getText().toString().trim();
+                if (gender.isEmpty()) {
                     Toast.makeText(this, "Lütfen cinsiyet seçiniz", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 
-                String gender = (selectedGenderId == R.id.radioButtonMale) ? "Erkek" : "Kız";
-                
-                Log.d(TAG, "Input values - Name: " + name + ", BirthYear: " + birthYear + 
+                Log.d(TAG, "Input values - Name: " + name + ", BirthDate: " + birthDate + 
                       ", Gender: " + gender + ", Sleep: " + sleepHour + ":" + sleepMinute + 
                       ", Wake: " + wakeHour + ":" + wakeMinute);
                 
                 // Veritabanına kaydet
                 Log.d(TAG, "Attempting to add child to database...");
-                boolean inserted = databaseHelper.addChild(name, birthYear, gender, 
+                boolean inserted = databaseHelper.addChild(name, birthDate, gender, 
                                                           sleepHour, sleepMinute, wakeHour, wakeMinute);
                 
                 if (inserted) {
@@ -157,5 +199,44 @@ public class AddChildActivity extends AppCompatActivity {
                 Toast.makeText(this, "Bir hata oluştu: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void showDatePicker() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+            this,
+            (view, year, month, dayOfMonth) -> {
+                selectedDate.set(year, month, dayOfMonth);
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                editTextBirthDate.setText(sdf.format(selectedDate.getTime()));
+            },
+            selectedDate.get(Calendar.YEAR),
+            selectedDate.get(Calendar.MONTH),
+            selectedDate.get(Calendar.DAY_OF_MONTH)
+        );
+        datePickerDialog.show();
+    }
+
+    private void saveChild() {
+        String name = editTextName.getText().toString().trim();
+        String birthDate = editTextBirthDate.getText().toString().trim();
+        String gender = autoCompleteGender.getText().toString().trim();
+
+        if (name.isEmpty() || birthDate.isEmpty() || gender.isEmpty()) {
+            Toast.makeText(this, "Lütfen tüm alanları doldurun", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Child child = new Child();
+        child.setName(name);
+        child.setBirthDate(selectedDate.getTimeInMillis());
+        child.setGender(gender);
+
+        long result = databaseHelper.addChild(child);
+        if (result != -1) {
+            Toast.makeText(this, "Çocuk başarıyla eklendi", Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            Toast.makeText(this, "Çocuk eklenirken bir hata oluştu", Toast.LENGTH_SHORT).show();
+        }
     }
 }

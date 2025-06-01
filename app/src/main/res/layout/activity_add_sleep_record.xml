@@ -1,148 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#FAFAFA">
+    android:background="@color/white">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <!-- Üst Bar -->
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="4dp">
 
-        <!-- Başlık -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Uyku Kaydı Ekle"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#2E7D32"
-            android:layout_gravity="center"
-            android:layout_marginBottom="32dp"/>
-
-        <!-- Çocuk Seçimi -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Çocuk Seçimi"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:id="@+id/textViewSelectedChild"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Seçilen Çocuk: Henüz seçilmedi"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp"/>
-
-        <Button
-            android:id="@+id/buttonSelectChild"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Çocuk Seç"
-            android:textSize="16sp"
-            android:backgroundTint="#4CAF50"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="24dp"/>
+            android:layout_height="?attr/actionBarSize">
 
-        <!-- Tarih Seçimi -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tarih Seçimi"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+            <ImageButton
+                android:id="@+id/buttonBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_back"
+                android:contentDescription="Geri"
+                app:tint="@color/black"/>
 
-        <TextView
-            android:id="@+id/textViewSleepDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tarih: "
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp"/>
+            <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Uyku Kaydı Ekle"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginStart="16dp"
+                android:layout_gravity="center_vertical"/>
 
-        <Button
-            android:id="@+id/buttonSelectDate"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Tarih Seç"
-            android:textSize="16sp"
-            android:backgroundTint="#FF9800"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="24dp"/>
+        </androidx.appcompat.widget.Toolbar>
 
-        <!-- Uyku Saatleri -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Uyku Saatleri"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
+    </com.google.android.material.appbar.AppBarLayout>
 
-        <!-- Uyku Saati -->
-        <Button
-            android:id="@+id/buttonSelectSleepTime"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Uyku Saatini Seç"
-            android:textSize="16sp"
-            android:backgroundTint="#E3F2FD"
-            android:textColor="#1976D2"
-            android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Uyanma Saati -->
-        <Button
-            android:id="@+id/buttonSelectWakeTime"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Uyanma Saatini Seç"
-            android:textSize="16sp"
-            android:backgroundTint="#FFF3E0"
-            android:textColor="#F57C00"
-            android:layout_marginBottom="24dp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
-
-        <!-- Uyku Kalitesi -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Uyku Kalitesi (1-5)"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
-
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <EditText
-                android:id="@+id/editTextQuality"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Uyku Başlangıç Zamanı -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Kalite (1=Kötü, 5=Mükemmel)"
-                android:inputType="number"
-                android:maxLength="1"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
 
-        <!-- Kaydet Butonu -->
-        <Button
-            android:id="@+id/buttonSaveRecord"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Uyku Kaydını Kaydet"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:backgroundTint="#2196F3"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="16dp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-    </LinearLayout>
-</ScrollView> 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uyku Başlangıç Zamanı"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="8dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonSleepStartTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Başlangıç Saatini Seç"
+                        android:textSize="16sp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Uyku Bitiş Zamanı -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uyku Bitiş Zamanı"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="8dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonSleepEndTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Bitiş Saatini Seç"
+                        android:textSize="16sp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Uyku Kalitesi -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uyku Kalitesi"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="8dp"/>
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/sliderSleepQuality"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:valueFrom="1"
+                        android:valueTo="5"
+                        android:stepSize="1"
+                        android:value="3"/>
+
+                    <TextView
+                        android:id="@+id/textViewSleepQuality"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Orta"
+                        android:textSize="14sp"
+                        android:textColor="@color/gray"
+                        android:layout_gravity="center_horizontal"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Notlar -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Notlar"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="8dp"/>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Notlarınızı buraya yazın"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editTextNotes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textMultiLine"
+                            android:minLines="3"
+                            android:gravity="top"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Kaydet Butonu -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonSave"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="Kaydet"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout> 

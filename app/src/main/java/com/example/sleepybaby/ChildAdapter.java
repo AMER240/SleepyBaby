@@ -13,64 +13,57 @@ import java.util.Date;
 import java.text.ParseException;
 
 public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHolder> {
-    private List<Child> childList;
+    private List<Child> children;
+    private OnChildClickListener listener;
 
-    public ChildAdapter() {
-        this.childList = new ArrayList<>();
+    public interface OnChildClickListener {
+        void onChildClick(Child child);
     }
 
-    public void setChildList(List<Child> childList) {
-        this.childList = childList;
-        notifyDataSetChanged();
+    public ChildAdapter(List<Child> children, OnChildClickListener listener) {
+        this.children = children;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
     public ChildViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.child_item, parent, false);
+                .inflate(R.layout.item_child, parent, false);
         return new ChildViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ChildViewHolder holder, int position) {
-        Child child = childList.get(position);
+        Child child = children.get(position);
         holder.bind(child);
     }
 
     @Override
     public int getItemCount() {
-        return childList.size();
+        return children.size();
     }
 
-    static class ChildViewHolder extends RecyclerView.ViewHolder {
-        private TextView txtName;
-        private TextView txtBirthDate;
-        private TextView txtGender;
-        private TextView txtSleepTime;
+    class ChildViewHolder extends RecyclerView.ViewHolder {
+        private TextView textViewName;
+        private TextView textViewAge;
 
-        public ChildViewHolder(@NonNull View itemView) {
+        ChildViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtName = itemView.findViewById(R.id.txtName);
-            txtBirthDate = itemView.findViewById(R.id.txtBirthDate);
-            txtGender = itemView.findViewById(R.id.txtGender);
-            txtSleepTime = itemView.findViewById(R.id.txtSleepTime);
+            textViewName = itemView.findViewById(R.id.textViewName);
+            textViewAge = itemView.findViewById(R.id.textViewAge);
+
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    listener.onChildClick(children.get(position));
+                }
+            });
         }
 
-        public void bind(Child child) {
-            txtName.setText(child.getName());
-            txtBirthDate.setText(formatDate(child.getBirthDate()));
-            txtGender.setText(child.getGender());
-            txtSleepTime.setText(formatTime(child.getSleepHour(), child.getSleepMinute()));
-        }
-
-        private String formatDate(long date) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            return sdf.format(new Date(date));
-        }
-
-        private String formatTime(int hour, int minute) {
-            return String.format("%02d:%02d", hour, minute);
+        void bind(Child child) {
+            textViewName.setText(child.getName());
+            textViewAge.setText(child.getAge() + " yaşında");
         }
     }
 }

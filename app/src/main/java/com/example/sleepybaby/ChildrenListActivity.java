@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -19,6 +22,7 @@ public class ChildrenListActivity extends AppCompatActivity implements ChildrenA
     private RecyclerView recyclerViewChildren;
     private ChildrenAdapter childrenAdapter;
     private DatabaseHelper databaseHelper;
+    private TextView textViewEmpty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +33,20 @@ public class ChildrenListActivity extends AppCompatActivity implements ChildrenA
             setContentView(R.layout.activity_children_list);
             Log.d(TAG, "Layout set successfully");
 
+            // Toolbar'ı ayarla
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
+            }
+
+            // Geri tuşu
+            findViewById(R.id.buttonBack).setOnClickListener(v -> onBackPressed());
+
             // View'ları initialize et
             recyclerViewChildren = findViewById(R.id.recyclerViewChildren);
             FloatingActionButton fabAddSleepRecord = findViewById(R.id.fabAddSleepRecord);
+            textViewEmpty = findViewById(R.id.textViewEmpty);
             databaseHelper = new DatabaseHelper(this);
             Log.d(TAG, "Views initialized");
 
@@ -89,6 +104,9 @@ public class ChildrenListActivity extends AppCompatActivity implements ChildrenA
             } else {
                 Log.e(TAG, "ChildrenAdapter is null");
             }
+
+            // Liste boşsa mesaj göster
+            textViewEmpty.setVisibility(children.isEmpty() ? View.VISIBLE : View.GONE);
         } catch (Exception e) {
             Log.e(TAG, "Error loading children: " + e.getMessage());
             e.printStackTrace();
@@ -100,6 +118,7 @@ public class ChildrenListActivity extends AppCompatActivity implements ChildrenA
     public void onChildClick(Child child) {
         Intent intent = new Intent(this, ChildDetailActivity.class);
         intent.putExtra("child_id", child.getId());
+        intent.putExtra("child_name", child.getName());
         startActivity(intent);
     }
 
