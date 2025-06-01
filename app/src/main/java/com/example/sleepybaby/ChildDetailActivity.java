@@ -39,6 +39,7 @@ public class ChildDetailActivity extends AppCompatActivity {
     private TextView textViewGender;
     private TextView textViewAverageSleep;
     private TextView textViewSleepQuality;
+    private TextView textViewRecommendedSleep;
     private MaterialButton buttonSetSleepTime;
     private MaterialButton buttonSetWakeTime;
     private FloatingActionButton fabAddSleepRecord;
@@ -122,6 +123,7 @@ public class ChildDetailActivity extends AppCompatActivity {
         textViewGender = findViewById(R.id.textViewGender);
         textViewAverageSleep = findViewById(R.id.textViewAverageSleep);
         textViewSleepQuality = findViewById(R.id.textViewSleepQuality);
+        textViewRecommendedSleep = findViewById(R.id.textViewRecommendedSleep);
         buttonSetSleepTime = findViewById(R.id.buttonSetSleepTime);
         buttonSetWakeTime = findViewById(R.id.buttonSetWakeTime);
         recyclerViewSleepHistory = findViewById(R.id.recyclerViewSleepHistory);
@@ -135,8 +137,45 @@ public class ChildDetailActivity extends AppCompatActivity {
             textViewAge.setText(child.getAge() + " yaşında");
             textViewGender.setText(child.getGender());
 
+            // Yaşa göre önerilen uyku saatlerini göster
+            String recommendedSleep = getRecommendedSleepHours(child.getAge());
+            textViewRecommendedSleep.setText("Önerilen uyku süresi: " + recommendedSleep);
+
+            // Uyku ve uyanma saatlerini göster
+            if (child.getSleepHour() != -1 && child.getSleepMinute() != -1) {
+                buttonSetSleepTime.setText(String.format(Locale.getDefault(), 
+                    "Uyku Saati: %02d:%02d", child.getSleepHour(), child.getSleepMinute()));
+            } else {
+                buttonSetSleepTime.setText("Uyku Saati Ayarla");
+            }
+
+            if (child.getWakeHour() != -1 && child.getWakeMinute() != -1) {
+                buttonSetWakeTime.setText(String.format(Locale.getDefault(), 
+                    "Uyanma Saati: %02d:%02d", child.getWakeHour(), child.getWakeMinute()));
+            } else {
+                buttonSetWakeTime.setText("Uyanma Saati Ayarla");
+            }
+
             // Uyku istatistiklerini yükle
             loadSleepStats();
+        }
+    }
+
+    private String getRecommendedSleepHours(int age) {
+        if (age < 1) {
+            return "Gece: 9-11 saat\nGündüz: 3-4 kısa uyku (toplam 3-4 saat)\nToplam: 12-15 saat";
+        } else if (age < 2) {
+            return "Gece: 10-12 saat\nGündüz: 1-2 kısa uyku (toplam 1-2 saat)\nToplam: 11-14 saat";
+        } else if (age < 3) {
+            return "Gece: 10-12 saat\nGündüz: 1 kısa uyku (1-2 saat)\nToplam: 10-13 saat";
+        } else if (age < 5) {
+            return "Gece: 10-12 saat\nGündüz: 0-1 kısa uyku (0-1 saat)\nToplam: 10-13 saat";
+        } else if (age < 13) {
+            return "Gece: 9-11 saat\nGündüz: 0 saat\nToplam: 9-11 saat";
+        } else if (age < 18) {
+            return "Gece: 8-10 saat\nGündüz: 0 saat\nToplam: 8-10 saat";
+        } else {
+            return "Gece: 7-9 saat\nGündüz: 0 saat\nToplam: 7-9 saat";
         }
     }
 
@@ -144,7 +183,13 @@ public class ChildDetailActivity extends AppCompatActivity {
         // Son 7 günlük ortalama uyku süresi
         double avgSleepHours = databaseHelper.getAverageSleepHours(childId, 7);
         textViewAverageSleep.setText(String.format(Locale.getDefault(), 
-            "Son 7 günlük ortalama uyku süresi: %.1f saat", avgSleepHours));
+            "Haftalık ortalama uyku süresi: %.1f saat", avgSleepHours));
+
+        // Aylık ortalama uyku süresi
+        double monthlyAvgSleepHours = databaseHelper.getAverageSleepHours(childId, 30);
+        textViewAverageSleep.setText(String.format(Locale.getDefault(), 
+            "Haftalık ortalama: %.1f saat\nAylık ortalama: %.1f saat", 
+            avgSleepHours, monthlyAvgSleepHours));
 
         // Uyku kalitesi
         double sleepQuality = databaseHelper.getSleepQuality(childId, 7);
@@ -172,6 +217,14 @@ public class ChildDetailActivity extends AppCompatActivity {
                     buttonSetSleepTime.setText(String.format(Locale.getDefault(), 
                         "Uyku Saati: %02d:%02d", hourOfDay, minute));
                     scheduleSleepTimeNotification(hourOfDay, minute);
+                    
+                    // Uyku kaydı ekle
+                    SleepRecord record = new SleepRecord();
+                    record.setChildId(childId);
+                    record.setSleepTime(new Date());
+                    record.setSleepHour(hourOfDay);
+                    record.setSleepMinute(minute);
+                    databaseHelper.addSleepRecord(record);
                 } else {
                     child.setWakeHour(hourOfDay);
                     child.setWakeMinute(minute);
@@ -180,6 +233,7 @@ public class ChildDetailActivity extends AppCompatActivity {
                     scheduleWakeTimeNotification(hourOfDay, minute);
                 }
                 databaseHelper.updateChild(child);
+                loadSleepHistory(); // Uyku geçmişini güncelle
             },
             calendar.get(Calendar.HOUR_OF_DAY),
             calendar.get(Calendar.MINUTE),
@@ -324,5 +378,6 @@ public class ChildDetailActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadChildDetails();
+        loadSleepHistory();
     }
 } 

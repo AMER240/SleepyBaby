@@ -1,45 +1,26 @@
 package com.example.sleepybaby;
 
-import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
-import android.util.Log;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.slider.Slider;
-import com.google.android.material.textfield.TextInputEditText;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class AddSleepRecordActivity extends AppCompatActivity {
-    private static final String TAG = "AddSleepRecordActivity";
-    
-    private Button buttonSelectDate;
-    private Button buttonSelectSleepTime;
-    private Button buttonSelectWakeTime;
-    private Button buttonSave;
-    private ImageButton buttonBack;
-    private Slider sliderSleepQuality;
-    private EditText editTextNotes;
-    private DatabaseHelper databaseHelper;
-    private Calendar selectedDate;
-    private Calendar sleepStartTime;
-    private Calendar sleepEndTime;
-    private SimpleDateFormat dateFormat;
-    private SimpleDateFormat timeFormat;
     private int childId;
     private String childName;
+    private DatabaseHelper databaseHelper;
+    private Button buttonSleepTime;
+    private Button buttonWakeTime;
+    private int sleepHour = -1;
+    private int sleepMinute = -1;
+    private int wakeHour = -1;
+    private int wakeMinute = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,128 +35,88 @@ public class AddSleepRecordActivity extends AppCompatActivity {
         }
 
         // Geri tuşu
-        buttonBack = findViewById(R.id.buttonBack);
-        buttonBack.setOnClickListener(v -> finish());
+        findViewById(R.id.buttonBack).setOnClickListener(v -> onBackPressed());
 
         // Intent'ten verileri al
-        childId = getIntent().getIntExtra("CHILD_ID", -1);
-        childName = getIntent().getStringExtra("CHILD_NAME");
+        childId = getIntent().getIntExtra("child_id", -1);
+        childName = getIntent().getStringExtra("child_name");
 
         if (childId == -1 || childName == null) {
-            Toast.makeText(this, "Çocuk bilgileri alınamadı", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Geçersiz çocuk bilgisi", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
+        // View'ları initialize et
+        buttonSleepTime = findViewById(R.id.buttonSleepTime);
+        buttonWakeTime = findViewById(R.id.buttonWakeTime);
+        Button buttonSave = findViewById(R.id.buttonSave);
+
         databaseHelper = new DatabaseHelper(this);
-        selectedDate = Calendar.getInstance();
-        sleepStartTime = Calendar.getInstance();
-        sleepEndTime = Calendar.getInstance();
-        dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
-        initializeViews();
-        setupListeners();
+        // Uyku saati seçici
+        buttonSleepTime.setOnClickListener(v -> showTimePicker(true));
 
-        // Başlığı ayarla
-        buttonSelectDate.setText(dateFormat.format(selectedDate.getTime()));
-        buttonSelectSleepTime.setText(timeFormat.format(sleepStartTime.getTime()));
-        buttonSelectWakeTime.setText(timeFormat.format(sleepEndTime.getTime()));
+        // Uyanma saati seçici
+        buttonWakeTime.setOnClickListener(v -> showTimePicker(false));
 
-        // Uyku kalitesi slider'ı
-        sliderSleepQuality.addOnChangeListener((slider, value, fromUser) -> {
-            int quality = (int) value;
-            String qualityText;
-            switch (quality) {
-                case 1:
-                    qualityText = "Çok Kötü";
-                    break;
-                case 2:
-                    qualityText = "Kötü";
-                    break;
-                case 3:
-                    qualityText = "Orta";
-                    break;
-                case 4:
-                    qualityText = "İyi";
-                    break;
-                case 5:
-                    qualityText = "Çok İyi";
-                    break;
-                default:
-                    qualityText = "Orta";
-            }
-            editTextNotes.setText(qualityText);
-        });
-    }
-    
-    private void initializeViews() {
-        buttonSelectDate = findViewById(R.id.buttonSelectDate);
-        buttonSelectSleepTime = findViewById(R.id.buttonSelectSleepTime);
-        buttonSelectWakeTime = findViewById(R.id.buttonSelectWakeTime);
-        buttonSave = findViewById(R.id.buttonSave);
-        sliderSleepQuality = findViewById(R.id.sliderSleepQuality);
-        editTextNotes = findViewById(R.id.editTextNotes);
-    }
-    
-    private void setupListeners() {
+        // Kaydet butonu
         buttonSave.setOnClickListener(v -> saveSleepRecord());
+    }
 
-        buttonSelectDate.setOnClickListener(v -> showDatePicker());
-        buttonSelectSleepTime.setOnClickListener(v -> showTimePicker(true));
-        buttonSelectWakeTime.setOnClickListener(v -> showTimePicker(false));
-    }
-    
-    private void showDatePicker() {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                this,
-                (view, year, month, dayOfMonth) -> {
-                    selectedDate.set(year, month, dayOfMonth);
-                    buttonSelectDate.setText(dateFormat.format(selectedDate.getTime()));
-                },
-                selectedDate.get(Calendar.YEAR),
-                selectedDate.get(Calendar.MONTH),
-                selectedDate.get(Calendar.DAY_OF_MONTH)
-        );
-        datePickerDialog.show();
-    }
-    
-    private void showTimePicker(boolean isStartTime) {
-        Calendar calendar = isStartTime ? sleepStartTime : sleepEndTime;
+    private void showTimePicker(boolean isSleepTime) {
+        Calendar calendar = Calendar.getInstance();
         TimePickerDialog timePickerDialog = new TimePickerDialog(
-                this,
-                (view, hourOfDay, minute) -> {
-                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                    calendar.set(Calendar.MINUTE, minute);
-                    Button button = isStartTime ? buttonSelectSleepTime : buttonSelectWakeTime;
-                    button.setText(timeFormat.format(calendar.getTime()));
-                },
-                calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE),
-                true
+            this,
+            (view, hourOfDay, minute) -> {
+                if (isSleepTime) {
+                    sleepHour = hourOfDay;
+                    sleepMinute = minute;
+                    buttonSleepTime.setText(String.format(Locale.getDefault(), 
+                        "Uyku Saati: %02d:%02d", hourOfDay, minute));
+                } else {
+                    wakeHour = hourOfDay;
+                    wakeMinute = minute;
+                    buttonWakeTime.setText(String.format(Locale.getDefault(), 
+                        "Uyanma Saati: %02d:%02d", hourOfDay, minute));
+                }
+            },
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE),
+            true
         );
         timePickerDialog.show();
     }
-    
+
     private void saveSleepRecord() {
-        if (sleepEndTime.before(sleepStartTime)) {
-            Toast.makeText(this, "Uyanma zamanı uyku zamanından önce olamaz", Toast.LENGTH_SHORT).show();
+        if (sleepHour == -1 || sleepMinute == -1 || wakeHour == -1 || wakeMinute == -1) {
+            Toast.makeText(this, "Lütfen uyku ve uyanma saatlerini seçin", Toast.LENGTH_SHORT).show();
             return;
         }
 
         SleepRecord record = new SleepRecord();
         record.setChildId(childId);
-        record.setStartTime(sleepStartTime.getTime());
-        record.setEndTime(sleepEndTime.getTime());
-        record.setQuality((int) sliderSleepQuality.getValue());
-        record.setNotes(editTextNotes.getText().toString().trim());
+        record.setSleepTime(new Date());
+        record.setSleepHour(sleepHour);
+        record.setSleepMinute(sleepMinute);
+        record.setWakeHour(wakeHour);
+        record.setWakeMinute(wakeMinute);
 
         long result = databaseHelper.addSleepRecord(record);
         if (result != -1) {
-            Toast.makeText(this, "Uyku kaydı başarıyla eklendi", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Uyku kaydı eklendi", Toast.LENGTH_SHORT).show();
             finish();
         } else {
-            Toast.makeText(this, "Uyku kaydı eklenirken bir hata oluştu", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Uyku kaydı eklenirken hata oluştu", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 } 
