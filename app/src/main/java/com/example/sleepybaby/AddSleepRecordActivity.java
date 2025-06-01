@@ -2,14 +2,20 @@ package com.example.sleepybaby;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -26,6 +32,7 @@ public class AddSleepRecordActivity extends AppCompatActivity {
     private int sleepMinute = -1;
     private int wakeHour = -1;
     private int wakeMinute = -1;
+    private int selectedQuality = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +81,9 @@ public class AddSleepRecordActivity extends AppCompatActivity {
 
         // Kaydet butonu
         findViewById(R.id.buttonSave).setOnClickListener(v -> saveSleepRecord());
+
+        // Kalite seçimi
+        setupQualitySelection();
     }
 
     private void initializeViews() {
@@ -155,6 +165,11 @@ public class AddSleepRecordActivity extends AppCompatActivity {
         record.setSleepMinute(sleepMinute);
         record.setWakeHour(wakeHour);
         record.setWakeMinute(wakeMinute);
+        record.setQuality(selectedQuality);
+        
+        // Notları al
+        String notes = ((TextInputEditText) findViewById(R.id.editTextNotes)).getText().toString();
+        record.setNotes(notes);
 
         long result = databaseHelper.addSleepRecord(record);
         if (result != -1) {
@@ -163,6 +178,62 @@ public class AddSleepRecordActivity extends AppCompatActivity {
             finish();
         } else {
             Toast.makeText(this, "Uyku kaydı eklenirken hata oluştu", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setupQualitySelection() {
+        // Kalite seçim butonlarını oluştur
+        LinearLayout qualityLayout = findViewById(R.id.qualityLayout);
+        qualityLayout.removeAllViews(); // Mevcut butonları temizle
+        
+        // Ekran genişliğini al
+        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        int buttonWidth = (screenWidth - 48) / 5; // 5 buton için genişlik hesapla (kenar boşlukları dahil)
+        
+        // Butonlar için parametreler
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+            buttonWidth,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(4, 0, 4, 0); // Butonlar arası boşluk
+        
+        // Her kalite seviyesi için buton oluştur
+        for (int i = 1; i <= 5; i++) {
+            MaterialButton button = new MaterialButton(this);
+            button.setText(String.valueOf(i));
+            button.setLayoutParams(params);
+            button.setHeight(48); // Yükseklik
+            button.setPadding(0, 0, 0, 0); // İç boşluğu kaldır
+            button.setTextSize(16); // Yazı boyutu
+            button.setCornerRadius(24); // Yuvarlak köşeler
+            button.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.purple_200)));
+            button.setTextColor(ContextCompat.getColor(this, android.R.color.black));
+            
+            final int quality = i;
+            button.setOnClickListener(v -> {
+                selectedQuality = quality;
+                // Tüm butonların görünümünü sıfırla
+                for (int j = 0; j < qualityLayout.getChildCount(); j++) {
+                    View child = qualityLayout.getChildAt(j);
+                    if (child instanceof MaterialButton) {
+                        MaterialButton btn = (MaterialButton) child;
+                        btn.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.purple_200)));
+                        btn.setTextColor(ContextCompat.getColor(this, android.R.color.black));
+                    }
+                }
+                // Seçilen butonu vurgula
+                button.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.purple_500)));
+                button.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+            });
+            
+            qualityLayout.addView(button);
+        }
+        
+        // Varsayılan olarak orta kaliteyi seç (3)
+        if (qualityLayout.getChildCount() >= 3) {
+            MaterialButton defaultButton = (MaterialButton) qualityLayout.getChildAt(2);
+            defaultButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.purple_500)));
+            defaultButton.setTextColor(ContextCompat.getColor(this, android.R.color.white));
         }
     }
 

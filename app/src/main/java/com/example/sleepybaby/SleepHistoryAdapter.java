@@ -20,7 +20,7 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
     public SleepHistoryAdapter(Context context, List<SleepRecord> sleepRecords) {
         this.context = context;
         this.sleepRecords = sleepRecords;
-        this.dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+        this.dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         this.timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
     }
 
@@ -35,34 +35,30 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         SleepRecord record = sleepRecords.get(position);
+        
+        // Tarih formatı
         holder.textViewDate.setText(dateFormat.format(record.getSleepTime()));
+        
+        // Saat formatı
         holder.textViewStartTime.setText(timeFormat.format(record.getSleepTime()));
         holder.textViewEndTime.setText(timeFormat.format(record.getWakeTime()));
-
-        // Uyku kalitesi
-        int quality = record.getQuality();
-        String qualityText;
-        if (quality >= 8) {
-            qualityText = "Çok İyi";
-        } else if (quality >= 6) {
-            qualityText = "İyi";
-        } else if (quality >= 4) {
-            qualityText = "Orta";
-        } else {
-            qualityText = "İyileştirilmeli";
-        }
-        holder.textViewQuality.setText("Kalite: " + qualityText);
-
-        // Uyku süresi
-        long durationMinutes = (record.getWakeTime().getTime() - record.getSleepTime().getTime()) / (60 * 1000);
+        
+        // Kalite
+        String qualityText = "Kalite: " + record.getQuality() + "/5";
+        holder.textViewQuality.setText(qualityText);
+        
+        // Süre
+        long durationMinutes = record.getDurationMinutes();
         int hours = (int) (durationMinutes / 60);
         int minutes = (int) (durationMinutes % 60);
-        holder.textViewDuration.setText(String.format("Süre: %d saat %d dakika", hours, minutes));
-
+        String durationText = String.format(Locale.getDefault(), "Süre: %d saat %d dakika", hours, minutes);
+        holder.textViewDuration.setText(durationText);
+        
         // Notlar
-        if (record.getNotes() != null && !record.getNotes().isEmpty()) {
+        String notes = record.getNotes();
+        if (notes != null && !notes.trim().isEmpty()) {
             holder.textViewNotes.setVisibility(View.VISIBLE);
-            holder.textViewNotes.setText(record.getNotes());
+            holder.textViewNotes.setText("Not: " + notes);
         } else {
             holder.textViewNotes.setVisibility(View.GONE);
         }
