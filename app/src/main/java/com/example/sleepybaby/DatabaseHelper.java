@@ -257,4 +257,128 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         double averageQuality = recordCount > 0 ? totalQuality / recordCount : 0;
         return new SleepStatistics(totalSleepMinutes, averageQuality, recordCount);
     }
+
+    // Çocuk getirme
+    public Child getChild(int childId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_CHILDREN,
+                null,
+                COLUMN_ID + "=?",
+                new String[]{String.valueOf(childId)},
+                null, null, null);
+
+        Child child = null;
+        if (cursor.moveToFirst()) {
+            child = new Child();
+            child.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)));
+            child.setName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME)));
+            child.setBirthDate(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_BIRTH_DATE)));
+            child.setGender(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_GENDER)));
+            child.setSleepHour(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SLEEP_HOUR)));
+            child.setSleepMinute(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SLEEP_MINUTE)));
+            child.setWakeHour(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_WAKE_HOUR)));
+            child.setWakeMinute(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_WAKE_MINUTE)));
+        }
+        cursor.close();
+        return child;
+    }
+
+    // Çocuk güncelleme
+    public boolean updateChild(Child child) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME, child.getName());
+        values.put(COLUMN_BIRTH_DATE, child.getBirthDate());
+        values.put(COLUMN_GENDER, child.getGender());
+        values.put(COLUMN_SLEEP_HOUR, child.getSleepHour());
+        values.put(COLUMN_SLEEP_MINUTE, child.getSleepMinute());
+        values.put(COLUMN_WAKE_HOUR, child.getWakeHour());
+        values.put(COLUMN_WAKE_MINUTE, child.getWakeMinute());
+
+        int result = db.update(TABLE_CHILDREN, values, COLUMN_ID + "=?",
+                new String[]{String.valueOf(child.getId())});
+        return result > 0;
+    }
+
+    // Ortalama uyku süresini hesaplama
+    public double getAverageSleepHours(int childId, int days) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -days);
+        long startDate = calendar.getTimeInMillis();
+
+        Cursor cursor = db.query(TABLE_SLEEP_RECORDS,
+                new String[]{"sleep_time", "wake_time"},
+                "child_id = ? AND sleep_time >= ?",
+                new String[]{String.valueOf(childId), String.valueOf(startDate)},
+                null, null, null);
+
+        double totalHours = 0;
+        int count = 0;
+
+        if (cursor.moveToFirst()) {
+            do {
+                long sleepTime = cursor.getLong(0);
+                long wakeTime = cursor.getLong(1);
+                totalHours += (wakeTime - sleepTime) / (60.0 * 60.0 * 1000.0);
+                count++;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        return count > 0 ? totalHours / count : 0;
+    }
+
+    // Ortalama uyku kalitesini hesaplama
+    public double getSleepQuality(int childId, int days) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -days);
+        long startDate = calendar.getTimeInMillis();
+
+        Cursor cursor = db.query(TABLE_SLEEP_RECORDS,
+                new String[]{"sleep_quality"},
+                "child_id = ? AND sleep_time >= ?",
+                new String[]{String.valueOf(childId), String.valueOf(startDate)},
+                null, null, null);
+
+        double totalQuality = 0;
+        int count = 0;
+
+        if (cursor.moveToFirst()) {
+            do {
+                totalQuality += cursor.getInt(0);
+                count++;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        return count > 0 ? totalQuality / count : 0;
+    }
+
+    // Belirli bir tarih aralığındaki uyku kayıtlarını getirme
+    public List<SleepRecord> getSleepRecords(int childId, long startDate, long endDate) {
+        List<SleepRecord> records = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_SLEEP_RECORDS,
+                new String[]{"id", "child_id", "sleep_time", "wake_time", "sleep_quality", "notes"},
+                "child_id = ? AND sleep_time >= ? AND sleep_time <= ?",
+                new String[]{String.valueOf(childId), String.valueOf(startDate), String.valueOf(endDate)},
+                null, null, "sleep_time DESC");
+
+        if (cursor.moveToFirst()) {
+            do {
+                SleepRecord record = new SleepRecord();
+                record.setId(cursor.getInt(0));
+                record.setChildId(cursor.getInt(1));
+                record.setSleepTime(new Date(cursor.getLong(2)));
+                record.setWakeTime(new Date(cursor.getLong(3)));
+                record.setSleepQuality(cursor.getInt(4));
+                record.setNotes(cursor.getString(5));
+                records.add(record);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return records;
+    }
 }

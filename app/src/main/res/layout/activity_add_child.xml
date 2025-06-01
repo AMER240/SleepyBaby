@@ -64,41 +64,49 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayoutBirthDate"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            <NumberPicker
+                android:id="@+id/numberPickerBirthYear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"/>
+
+            <RadioGroup
+                android:id="@+id/radioGroupGender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Doğum Tarihi">
+                android:orientation="horizontal">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextBirthDate"
-                    android:layout_width="match_parent"
+                <RadioButton
+                    android:id="@+id/radioButtonMale"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:inputType="none"/>
+                    android:text="Erkek"/>
 
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayoutGender"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="Cinsiyet">
-
-                <AutoCompleteTextView
-                    android:id="@+id/autoCompleteGender"
-                    android:layout_width="match_parent"
+                <RadioButton
+                    android:id="@+id/radioButtonFemale"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="none"/>
+                    android:text="Kız"/>
 
-            </com.google.android.material.textfield.TextInputLayout>
+            </RadioGroup>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonSave"
+                android:id="@+id/buttonSelectSleepTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Uyku Saatini Seç"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonSelectWakeTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Uyanma Saatini Seç"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonSaveChild"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="32dp"
