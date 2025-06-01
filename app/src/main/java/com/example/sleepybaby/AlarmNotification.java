@@ -14,6 +14,9 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.WindowManager;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.ActivityCompat;
+import android.Manifest;
+import android.content.pm.PackageManager;
 
 public class AlarmNotification {
     private static final String TAG = "AlarmNotification";
@@ -31,25 +34,23 @@ public class AlarmNotification {
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             try {
-                CharSequence name = "منبه";
-                String description = "إشعارات المنبه";
                 NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
-                    name,
+                    "Alarm Notifications",
                     NotificationManager.IMPORTANCE_HIGH
                 );
                 
-                // تكوين القناة
-                channel.setDescription(description);
+                // Kanal özellikleri
+                channel.setDescription("Alarm notifications for Sleepy Baby");
                 channel.enableLights(true);
                 channel.setLightColor(Color.RED);
                 channel.enableVibration(true);
-                channel.setVibrationPattern(new long[]{1000, 1000, 1000, 1000});
+                channel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
                 channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
                 channel.setBypassDnd(true);
                 channel.setShowBadge(true);
                 
-                // إعداد خصائص الصوت
+                // Ses özellikleri
                 AudioAttributes audioAttributes = new AudioAttributes.Builder()
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .setUsage(AudioAttributes.USAGE_ALARM)
@@ -66,7 +67,16 @@ public class AlarmNotification {
 
     public void showAlarmNotification(String childName) {
         try {
-            // إنشاء Intent للنشاط
+            // İzinleri kontrol et
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                    Log.e(TAG, "POST_NOTIFICATIONS permission not granted");
+                    return;
+                }
+            }
+
+            // Aktivite intent'i
             Intent intent = new Intent(context, ActiveAlarmActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | 
                           Intent.FLAG_ACTIVITY_CLEAR_TOP |
@@ -81,24 +91,25 @@ public class AlarmNotification {
                 PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
             );
 
-            // إنشاء الإشعار
+            // Bildirim oluştur
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.ic_lock_idle_alarm) // استخدام أيقونة المنبه الافتراضية
-                .setContentTitle("وقت الاستيقاظ!")
-                .setContentText("حان وقت استيقاظ " + childName)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle("Uyanma Zamanı!")
+                .setContentText(childName + " için uyanma zamanı")
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setContentIntent(pendingIntent)
                 .setFullScreenIntent(pendingIntent, true)
-                .setVibrate(new long[]{1000, 1000, 1000, 1000})
+                .setVibrate(new long[]{0, 1000, 500, 1000})
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setSound(Settings.System.DEFAULT_ALARM_ALERT_URI);
+                .setSound(Settings.System.DEFAULT_ALARM_ALERT_URI)
+                .setLights(Color.RED, 1000, 1000);
 
             Notification notification = builder.build();
-            notification.flags |= Notification.FLAG_INSISTENT; // تكرار الصوت
+            notification.flags |= Notification.FLAG_INSISTENT | Notification.FLAG_NO_CLEAR;
 
             notificationManager.notify(NOTIFICATION_ID, notification);
             Log.d(TAG, "Alarm notification shown for child: " + childName);

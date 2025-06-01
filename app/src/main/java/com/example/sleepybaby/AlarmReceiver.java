@@ -40,10 +40,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         // Acquire wake lock
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(
-            PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
+            PowerManager.FULL_WAKE_LOCK | 
+            PowerManager.ACQUIRE_CAUSES_WAKEUP |
+            PowerManager.ON_AFTER_RELEASE,
             "SleepyBaby:AlarmWakeLock"
         );
-        wakeLock.acquire(10*60*1000L); // 10 minutes
+        wakeLock.acquire(30*60*1000L); // 30 minutes
 
         try {
             // Get alarm info
@@ -51,6 +53,17 @@ public class AlarmReceiver extends BroadcastReceiver {
             String childName = intent.getStringExtra("CHILD_NAME");
             
             Log.d(TAG, "Processing alarm for child: " + childName + ", alarm ID: " + alarmId);
+
+            // Start alarm activity first
+            Intent alarmIntent = new Intent(context, ActiveAlarmActivity.class);
+            alarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                               Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                               Intent.FLAG_INCLUDE_STOPPED_PACKAGES |
+                               Intent.FLAG_ACTIVITY_NO_USER_ACTION);
+            
+            alarmIntent.putExtra("CHILD_NAME", childName);
+            alarmIntent.putExtra("ALARM_ID", alarmId);
+            context.startActivity(alarmIntent);
 
             // Show notification
             alarmNotification = new AlarmNotification(context);
@@ -62,16 +75,6 @@ public class AlarmReceiver extends BroadcastReceiver {
             // Play alarm sound
             playAlarmSound();
 
-            // Start alarm activity
-            Intent alarmIntent = new Intent(context, ActiveAlarmActivity.class);
-            alarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                               Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                               Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-            
-            alarmIntent.putExtra("CHILD_NAME", childName);
-            alarmIntent.putExtra("ALARM_ID", alarmId);
-            context.startActivity(alarmIntent);
-
         } catch (Exception e) {
             Log.e(TAG, "Error processing alarm: " + e.getMessage(), e);
         }
@@ -81,7 +84,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         try {
             vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
             if (vibrator != null && vibrator.hasVibrator()) {
-                long[] pattern = {0, 1000, 1000}; // Vibrate for 1 second, pause for 1 second
+                long[] pattern = {0, 1000, 500, 1000}; // Vibrate for 1 second, pause for 0.5 second
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0));
                 } else {
@@ -140,6 +143,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 }
 
                 mediaPlayer.setLooping(true);
+                mediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);
                 mediaPlayer.start();
                 Log.d(TAG, "Alarm sound started");
             } else {

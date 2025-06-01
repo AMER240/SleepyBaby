@@ -1,67 +1,73 @@
 package com.example.sleepybaby;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
-import android.widget.TextView;
-import android.widget.Button;
-import androidx.appcompat.app.AppCompatActivity;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import android.os.PowerManager;
 import android.view.WindowManager;
-import android.os.Build;
+import android.widget.Button;
+import android.widget.TextView;
+import android.util.Log;
 
-public class ActiveAlarmActivity extends AppCompatActivity {
-    private TextView textViewAlarmTime;
-    private TextView textViewChildName;
-    private Button buttonStopAlarm;
+public class ActiveAlarmActivity extends Activity {
+    private static final String TAG = "ActiveAlarmActivity";
+    private PowerManager.WakeLock wakeLock;
+    private AlarmReceiver alarmReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // Set window flags
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            setShowWhenLocked(true);
-            setTurnScreenOn(true);
-            getWindow().addFlags(
-                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
-                WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
-            );
-        } else {
-            getWindow().addFlags(
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
-                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-            );
-        }
-        
+        Log.d(TAG, "ActiveAlarmActivity onCreate started");
+
+        // Ekranı açık tut
+        getWindow().addFlags(
+            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+            WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+        );
+
+        // Wake lock al
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(
+            PowerManager.FULL_WAKE_LOCK |
+            PowerManager.ACQUIRE_CAUSES_WAKEUP |
+            PowerManager.ON_AFTER_RELEASE,
+            "SleepyBaby:ActiveAlarmWakeLock"
+        );
+        wakeLock.acquire(30*60*1000L); // 30 minutes
+
         setContentView(R.layout.activity_active_alarm);
 
-        // تهيئة العناصر
-        textViewAlarmTime = findViewById(R.id.textViewAlarmTime);
-        textViewChildName = findViewById(R.id.textViewChildName);
-        buttonStopAlarm = findViewById(R.id.buttonStopAlarm);
-
-        // عرض الوقت الحالي
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        textViewAlarmTime.setText(sdf.format(new Date()));
-
-        // عرض اسم الطفل
+        // Alarm bilgilerini al
         String childName = getIntent().getStringExtra("CHILD_NAME");
-        textViewChildName.setText("حان وقت استيقاظ " + childName);
+        long alarmId = getIntent().getLongExtra("ALARM_ID", -1);
 
-        // إعداد زر إيقاف المنبه
-        buttonStopAlarm.setOnClickListener(v -> {
-            // إيقاف المنبه
-            AlarmReceiver receiver = new AlarmReceiver();
-            receiver.stopAlarm();
+        // UI elemanlarını ayarla
+        TextView textViewTitle = findViewById(R.id.textViewTitle);
+        textViewTitle.setText(childName + " için Uyanma Zamanı!");
+
+        Button buttonStop = findViewById(R.id.buttonStop);
+        buttonStop.setOnClickListener(v -> {
+            stopAlarm();
             finish();
         });
+
+        // AlarmReceiver referansını al
+        alarmReceiver = new AlarmReceiver();
+    }
+
+    private void stopAlarm() {
+        if (alarmReceiver != null) {
+            alarmReceiver.stopAlarm();
+        }
     }
 
     @Override
-    public void onBackPressed() {
-        // تعطيل زر الرجوع
+    protected void onDestroy() {
+        super.onDestroy();
+        if (wakeLock != null && wakeLock.isHeld()) {
+            wakeLock.release();
+        }
     }
 } 
