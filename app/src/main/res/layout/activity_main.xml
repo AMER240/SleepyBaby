@@ -4,36 +4,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-<<<<<<< HEAD
     android:background="@color/white">
-=======
-    android:padding="16dp"
-    android:background="#F5F5F5">
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
 
     <!-- Ana başlık -->
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-<<<<<<< HEAD
         android:text="Çocuklarım"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="@color/black"
         android:layout_marginTop="16dp"
-=======
-        android:text="Sleepy Baby"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="#2E7D32"
-        android:layout_marginTop="64dp"
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-<<<<<<< HEAD
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewChildren"
         android:layout_width="match_parent"
@@ -55,74 +41,5 @@
         app:tint="@color/white"
         android:backgroundTint="@color/primary"/>
 
-=======
-    <!-- Alt başlık -->
-    <TextView
-        android:id="@+id/textViewSubtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Çocuğunuzun uyku takibini başlatın"
-        android:textSize="16sp"
-        android:textColor="#666666"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/textViewTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Çocuk ekleme butonu -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonAddChild"
-        android:layout_width="250dp"
-        android:layout_height="80dp"
-        android:text="Çocuk Ekle"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:backgroundTint="#4CAF50"
-        android:textColor="#FFFFFF"
-        android:elevation="8dp"
-        app:cornerRadius="40dp"
-        app:icon="@android:drawable/ic_input_add"
-        app:iconGravity="textStart"
-        app:iconSize="32dp"
-        app:iconTint="#FFFFFF"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.4"/>
-
-    <!-- Çocuklar listesi butonu -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonViewChildren"
-        android:layout_width="280dp"
-        android:layout_height="80dp"
-        android:text="Çocuklar"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:backgroundTint="#2196F3"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="16dp"
-        app:cornerRadius="40dp"
-        app:icon="@android:drawable/ic_menu_view"
-        app:iconGravity="textStart"
-        app:iconSize="32dp"
-        app:iconTint="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@id/buttonAddChild"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- Alt bilgi -->
-    <TextView
-        android:id="@+id/textViewInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="İlk çocuğunuzu ekleyerek başlayın"
-        android:textSize="14sp"
-        android:textColor="#999999"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/buttonAddChild"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
 </androidx.constraintlayout.widget.ConstraintLayout>

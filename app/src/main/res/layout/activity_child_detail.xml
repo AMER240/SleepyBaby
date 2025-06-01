@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -45,75 +44,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-=======
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
-
-<<<<<<< HEAD
             <!-- Çocuk Bilgileri Kartı -->
-=======
-            <!-- Çocuk Bilgileri -->
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
+            <!-- Çocuk Bilgileri Kartı -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-<<<<<<< HEAD
                 app:cardCornerRadius="12dp"
-=======
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:id="@+id/textViewChildName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="24sp"
-                        android:textStyle="bold"/>
-
-                    <TextView
-                        android:id="@+id/textViewChildAge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textSize="16sp"/>
-
-                    <TextView
-                        android:id="@+id/textViewSleepSchedule"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textSize="16sp"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Önerilen Uyku Saatleri -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
+                app:cardCornerRadius="12dp"
                 app:cardElevation="4dp">
 
                 <LinearLayout
@@ -125,7 +69,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-<<<<<<< HEAD
                         android:text="Çocuk Bilgileri"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -152,27 +95,10 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Uyku Zamanları Kartı -->
-=======
-                        android:text="Önerilen Uyku Saatleri"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
-
-                    <TextView
-                        android:id="@+id/textViewRecommendedHours"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textSize="16sp"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Uyku İstatistikleri -->
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-<<<<<<< HEAD
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp">
 
@@ -218,9 +144,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
-=======
-                app:cardCornerRadius="8dp"
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
                 app:cardElevation="4dp">
 
                 <LinearLayout
@@ -234,7 +157,6 @@
                         android:layout_height="wrap_content"
                         android:text="Uyku İstatistikleri"
                         android:textSize="18sp"
-<<<<<<< HEAD
                         android:textStyle="bold"
                         android:textColor="@color/black"
                         android:layout_marginBottom="16dp"/>
@@ -263,31 +185,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
-=======
-                        android:textStyle="bold"/>
-
-                    <TextView
-                        android:id="@+id/textViewWeeklyStats"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textSize="16sp"/>
-
-                    <TextView
-                        android:id="@+id/textViewMonthlyStats"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textSize="16sp"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Uyku Geçmişi -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="8dp"
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
                 app:cardElevation="4dp">
 
                 <LinearLayout
@@ -301,19 +198,17 @@
                         android:layout_height="wrap_content"
                         android:text="Uyku Geçmişi"
                         android:textSize="18sp"
-<<<<<<< HEAD
                         android:textStyle="bold"
                         android:textColor="@color/black"
                         android:layout_marginBottom="16dp"/>
-=======
-                        android:textStyle="bold"/>
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="16dp"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerViewSleepHistory"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-<<<<<<< HEAD
                         android:nestedScrollingEnabled="false"/>
 
                 </LinearLayout>
@@ -322,12 +217,6 @@
 
         </LinearLayout>
 
-=======
-                        android:layout_marginTop="8dp"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -336,15 +225,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-<<<<<<< HEAD
         android:src="@drawable/ic_add"
         android:contentDescription="Uyku kaydı ekle"
         app:fabSize="normal"
         app:tint="@color/white"
         android:backgroundTint="@color/primary"/>
-=======
-        android:src="@android:drawable/ic_menu_add"
-        android:contentDescription="Uyku kaydı ekle"/>
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout> 

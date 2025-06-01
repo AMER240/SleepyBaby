@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.sleepybaby">
 
-<<<<<<< HEAD
     <!-- الصلاحيات -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
@@ -100,57 +99,3 @@
     </application>
 
 </manifest>
-=======
-    <!-- Bildirim izinleri -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
-
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="SleepyBaby"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.SleepyBaby"
-        tools:targetApi="31">
-
-        <!-- Main Activity with LAUNCHER intent filter -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity android:name=".ThreadActivity" />
-        <activity android:name=".AddChildActivity" />
-        <activity android:name=".ScheduleActivity" />
-        <activity android:name=".AddSleepRecordActivity" />
-
-        <activity
-            android:name=".ChildrenListActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ChildDetailActivity"
-            android:exported="false" />
-
-        <!-- Bildirim alıcısı -->
-        <receiver
-            android:name=".NotificationReceiver"
-            android:enabled="true"
-            android:exported="false" />
-
-        <!-- Bildirim alıcısı -->
-        <receiver
-            android:name=".NotificationReceiver"
-            android:enabled="true"
-            android:exported="false" />
-
-    </application>
-
-</manifest>
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d

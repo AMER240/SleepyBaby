@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-=======
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,7 +10,6 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-<<<<<<< HEAD
         android:layout_height="?attr/actionBarSize"
         android:background="@color/white"
         android:elevation="4dp"
@@ -27,15 +23,11 @@
             android:src="@drawable/ic_back"
             android:contentDescription="Geri"
             app:tint="@color/black"/>
-=======
-        android:layout_height="wrap_content">
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
 
         <!-- Başlık -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-<<<<<<< HEAD
             android:text="Çocuk Ekle"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -138,144 +130,110 @@
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-=======
-            android:text="Yeni Çocuk Ekle"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#2E7D32"
-            android:layout_gravity="center"
-            android:layout_marginBottom="32dp"/>
-
-        <!-- Çocuk Bilgileri -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Çocuk Bilgileri"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- İsim -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <EditText
-                android:id="@+id/editTextName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Çocuk Adı"
-                android:inputType="textPersonName"/>
-        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Doğum Yılı -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Doğum Yılı"
-            android:textSize="16sp"
+            android:text="Çocuk Ekle"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+            android:textColor="@color/black"
+            android:layout_marginStart="16dp"
+            android:layout_gravity="center_vertical"/>
 
-        <NumberPicker
-            android:id="@+id/numberPickerBirthYear"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_marginBottom="16dp"/>
+    </androidx.appcompat.widget.Toolbar>
 
-        <!-- Cinsiyet -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cinsiyet"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <RadioGroup
-            android:id="@+id/radioGroupGender"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="24dp">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <RadioButton
-                android:id="@+id/radioButtonMale"
-                android:layout_width="0dp"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayoutName"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Erkek"
-                android:textSize="16sp"/>
+                android:layout_marginTop="16dp"
+                android:hint="Çocuğun Adı">
 
-            <RadioButton
-                android:id="@+id/radioButtonFemale"
-                android:layout_width="0dp"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Kız"
-                android:textSize="16sp"/>
-        </RadioGroup>
+                android:layout_marginTop="16dp"
+                android:hint="Doğum Tarihi">
 
-        <!-- Uyku Zamanları -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Uyku Zamanları"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextBirthDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:inputType="none" />
 
-        <!-- Uyku Saati -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Uyku Saati"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/buttonSelectSleepTime"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Uyku Saatini Seç"
-            android:textSize="16sp"
-            android:backgroundTint="#E3F2FD"
-            android:textColor="#1976D2"
-            android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Cinsiyet"
+                android:textSize="16sp"
+                android:textColor="@color/black"/>
 
-        <!-- Uyanma Saati -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Uyanma Saati"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
 
-        <Button
-            android:id="@+id/buttonSelectWakeTime"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Uyanma Saatini Seç"
-            android:textSize="16sp"
-            android:backgroundTint="#FFF3E0"
-            android:textColor="#F57C00"
-            android:layout_marginBottom="32dp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonGenderMale"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    android:text="Erkek"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
-        <!-- Kaydet Butonu -->
-        <Button
-            android:id="@+id/buttonSaveChild"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Çocuğu Kaydet"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:backgroundTint="#4CAF50"
-            android:textColor="#FFFFFF"
-            android:layout_marginTop="16dp"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonGenderFemale"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:text="Kız"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
-    </LinearLayout>
-</ScrollView>
->>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonSaveChild"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="32dp"
+                android:text="Kaydet"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="28dp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
