@@ -164,29 +164,62 @@
                         android:id="@+id/textViewRecommendedSleep"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="16dp"
                         android:textSize="16sp"
                         android:textColor="@color/black"
                         android:padding="8dp"
                         android:background="@drawable/rounded_background"
                         android:elevation="2dp"/>
+
+                    <!-- Haftalık İstatistikler -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Haftalık İstatistikler"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="8dp"/>
 
                     <TextView
                         android:id="@+id/textViewAverageSleep"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textSize="16sp"
-                        android:textColor="@color/black"
-                        android:padding="8dp"
-                        android:background="@drawable/rounded_background"
-                        android:elevation="2dp"/>
+                        android:textSize="14sp"
+                        android:textColor="@color/gray"
+                        android:layout_marginBottom="4dp"/>
 
                     <TextView
                         android:id="@+id/textViewSleepQuality"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/gray"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- Aylık İstatistikler -->
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="Aylık İstatistikler"
+                        android:textStyle="bold"
                         android:textSize="16sp"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:id="@+id/textViewMonthlyAverage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/gray"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:id="@+id/textViewMonthlyQuality"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
                         android:textColor="@color/gray"/>
 
                 </LinearLayout>

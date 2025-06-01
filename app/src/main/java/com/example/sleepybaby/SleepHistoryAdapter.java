@@ -44,8 +44,28 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
         holder.textViewEndTime.setText(timeFormat.format(record.getWakeTime()));
         
         // Kalite
-        String qualityText = "Kalite: " + record.getQuality() + "/5";
-        holder.textViewQuality.setText(qualityText);
+        int quality = record.getQuality();
+        String qualityText;
+        switch (quality) {
+            case 1:
+                qualityText = "Çok Kötü";
+                break;
+            case 2:
+                qualityText = "Kötü";
+                break;
+            case 3:
+                qualityText = "Orta";
+                break;
+            case 4:
+                qualityText = "İyi";
+                break;
+            case 5:
+                qualityText = "Çok İyi";
+                break;
+            default:
+                qualityText = "Belirsiz";
+        }
+        holder.textViewQuality.setText("Kalite: " + qualityText);
         
         // Süre
         long durationMinutes = record.getDurationMinutes();

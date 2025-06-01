@@ -39,6 +39,8 @@ public class ChildDetailActivity extends AppCompatActivity {
     private TextView textViewGender;
     private TextView textViewAverageSleep;
     private TextView textViewSleepQuality;
+    private TextView textViewMonthlyAverage;
+    private TextView textViewMonthlyQuality;
     private TextView textViewRecommendedSleep;
     private MaterialButton buttonSetSleepTime;
     private MaterialButton buttonSetWakeTime;
@@ -118,6 +120,8 @@ public class ChildDetailActivity extends AppCompatActivity {
         textViewGender = findViewById(R.id.textViewGender);
         textViewAverageSleep = findViewById(R.id.textViewAverageSleep);
         textViewSleepQuality = findViewById(R.id.textViewSleepQuality);
+        textViewMonthlyAverage = findViewById(R.id.textViewMonthlyAverage);
+        textViewMonthlyQuality = findViewById(R.id.textViewMonthlyQuality);
         textViewRecommendedSleep = findViewById(R.id.textViewRecommendedSleep);
         buttonSetSleepTime = findViewById(R.id.buttonSetSleepTime);
         buttonSetWakeTime = findViewById(R.id.buttonSetWakeTime);
@@ -152,7 +156,7 @@ public class ChildDetailActivity extends AppCompatActivity {
             }
 
             // Uyku istatistiklerini yükle
-            loadSleepStats();
+            updateSleepStatistics();
         }
     }
 
@@ -174,31 +178,56 @@ public class ChildDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void loadSleepStats() {
-        // Son 7 günlük ortalama uyku süresi
-        double avgSleepHours = databaseHelper.getAverageSleepHours(childId, 7);
-        textViewAverageSleep.setText(String.format(Locale.getDefault(), 
-            "Haftalık ortalama uyku süresi: %.1f saat", avgSleepHours));
-
-        // Aylık ortalama uyku süresi
+    private void updateSleepStatistics() {
+        // Haftalık ve aylık ortalama uyku süreleri
+        double weeklyAvgSleepHours = databaseHelper.getAverageSleepHours(childId, 7);
         double monthlyAvgSleepHours = databaseHelper.getAverageSleepHours(childId, 30);
-        textViewAverageSleep.setText(String.format(Locale.getDefault(), 
-            "Haftalık ortalama: %.1f saat\nAylık ortalama: %.1f saat", 
-            avgSleepHours, monthlyAvgSleepHours));
-
-        // Uyku kalitesi
-        double sleepQuality = databaseHelper.getSleepQuality(childId, 7);
-        String qualityText;
-        if (sleepQuality >= 0.8) {
-            qualityText = "Çok İyi";
-        } else if (sleepQuality >= 0.6) {
-            qualityText = "İyi";
-        } else if (sleepQuality >= 0.4) {
-            qualityText = "Orta";
+        
+        // Haftalık ve aylık ortalama uyku kaliteleri
+        double weeklyAvgQuality = databaseHelper.getSleepQuality(childId, 7);
+        double monthlyAvgQuality = databaseHelper.getSleepQuality(childId, 30);
+        
+        // Haftalık kalite değerlendirmesi
+        String weeklyQualityText;
+        if (weeklyAvgQuality >= 4.5) {
+            weeklyQualityText = "Çok İyi";
+        } else if (weeklyAvgQuality >= 3.5) {
+            weeklyQualityText = "İyi";
+        } else if (weeklyAvgQuality >= 2.5) {
+            weeklyQualityText = "Orta";
+        } else if (weeklyAvgQuality >= 1.5) {
+            weeklyQualityText = "Kötü";
         } else {
-            qualityText = "İyileştirilmeli";
+            weeklyQualityText = "Çok Kötü";
         }
-        textViewSleepQuality.setText("Uyku kalitesi: " + qualityText);
+        
+        // Aylık kalite değerlendirmesi
+        String monthlyQualityText;
+        if (monthlyAvgQuality >= 4.5) {
+            monthlyQualityText = "Çok İyi";
+        } else if (monthlyAvgQuality >= 3.5) {
+            monthlyQualityText = "İyi";
+        } else if (monthlyAvgQuality >= 2.5) {
+            monthlyQualityText = "Orta";
+        } else if (monthlyAvgQuality >= 1.5) {
+            monthlyQualityText = "Kötü";
+        } else {
+            monthlyQualityText = "Çok Kötü";
+        }
+        
+        // Haftalık istatistikler
+        textViewAverageSleep.setText(String.format(Locale.getDefault(), 
+            "Haftalık ortalama: %.1f saat", weeklyAvgSleepHours));
+            
+        textViewSleepQuality.setText(String.format(Locale.getDefault(), 
+            "Haftalık ortalama kalite: %s", weeklyQualityText));
+            
+        // Aylık istatistikler
+        textViewMonthlyAverage.setText(String.format(Locale.getDefault(), 
+            "Aylık ortalama: %.1f saat", monthlyAvgSleepHours));
+            
+        textViewMonthlyQuality.setText(String.format(Locale.getDefault(), 
+            "Aylık ortalama kalite: %s", monthlyQualityText));
     }
 
     private void showTimePicker(boolean isSleepTime) {
