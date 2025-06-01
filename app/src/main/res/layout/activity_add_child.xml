@@ -64,46 +64,54 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <NumberPicker
-                android:id="@+id/numberPickerBirthYear"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"/>
-
-            <RadioGroup
-                android:id="@+id/radioGroupGender"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:orientation="horizontal">
+                android:hint="Doğum Tarihi">
 
-                <RadioButton
-                    android:id="@+id/radioButtonMale"
-                    android:layout_width="wrap_content"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextBirthDate"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Erkek"/>
+                    android:focusable="false"
+                    android:inputType="none" />
 
-                <RadioButton
-                    android:id="@+id/radioButtonFemale"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Kız"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            </RadioGroup>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonSelectSleepTime"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Uyku Saatini Seç"/>
+                android:text="Cinsiyet"
+                android:textSize="16sp"
+                android:textColor="@color/black"/>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonSelectWakeTime"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Uyanma Saatini Seç"/>
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonGenderMale"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    android:text="Erkek"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonGenderFemale"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:text="Kız"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+            </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonSaveChild"

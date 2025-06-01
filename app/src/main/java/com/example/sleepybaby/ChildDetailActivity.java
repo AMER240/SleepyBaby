@@ -1,8 +1,10 @@
 package com.example.sleepybaby;
 
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +21,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 
 public class ChildDetailActivity extends AppCompatActivity {
     private static final String TAG = "ChildDetailActivity";
@@ -42,6 +49,17 @@ public class ChildDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_child_detail);
 
         try {
+            // Bildirim izinlerini kontrol et
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) 
+                    != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS},
+                        1001
+                    );
+                }
+            }
+
             // Toolbar'ı ayarla
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
@@ -53,7 +71,7 @@ public class ChildDetailActivity extends AppCompatActivity {
             findViewById(R.id.buttonBack).setOnClickListener(v -> onBackPressed());
 
             // Intent'ten verileri al
-            childId = getIntent().getIntExtra("CHILD_ID", -1);
+            childId = getIntent().getIntExtra("child_id", -1);
             if (childId == -1) {
                 Toast.makeText(this, "Geçersiz çocuk ID'si", Toast.LENGTH_SHORT).show();
                 finish();
@@ -78,21 +96,23 @@ public class ChildDetailActivity extends AppCompatActivity {
 
             // Uyku geçmişini yükle
             recyclerViewSleepHistory.setLayoutManager(new LinearLayoutManager(this));
-            sleepHistoryAdapter = new SleepHistoryAdapter(new ArrayList<>());
+            sleepHistoryAdapter = new SleepHistoryAdapter(this, new ArrayList<>());
             recyclerViewSleepHistory.setAdapter(sleepHistoryAdapter);
             loadSleepHistory();
 
             // Uyku kaydı ekleme butonu
             fabAddSleepRecord.setOnClickListener(v -> {
                 Intent intent = new Intent(this, AddSleepRecordActivity.class);
-                intent.putExtra("CHILD_ID", childId);
-                intent.putExtra("CHILD_NAME", child.getName());
+                intent.putExtra("child_id", childId);
+                intent.putExtra("child_name", child.getName());
                 startActivity(intent);
             });
 
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreate: " + e.getMessage());
-            Toast.makeText(this, "Uygulama başlatılırken hata oluştu", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            Toast.makeText(this, "Uygulama başlatılırken hata oluştu: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 
@@ -111,15 +131,8 @@ public class ChildDetailActivity extends AppCompatActivity {
     private void loadChildDetails() {
         child = databaseHelper.getChild(childId);
         if (child != null) {
-            // Yaş hesapla
-            Calendar birthDate = Calendar.getInstance();
-            birthDate.setTimeInMillis(child.getBirthDate());
-            Calendar today = Calendar.getInstance();
-            int age = today.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR);
-            if (today.get(Calendar.DAY_OF_YEAR) < birthDate.get(Calendar.DAY_OF_YEAR)) {
-                age--;
-            }
-            textViewAge.setText(age + " yaşında");
+            textViewTitle.setText(child.getName());
+            textViewAge.setText(child.getAge() + " yaşında");
             textViewGender.setText(child.getGender());
 
             // Uyku istatistiklerini yükle
@@ -158,11 +171,13 @@ public class ChildDetailActivity extends AppCompatActivity {
                     child.setSleepMinute(minute);
                     buttonSetSleepTime.setText(String.format(Locale.getDefault(), 
                         "Uyku Saati: %02d:%02d", hourOfDay, minute));
+                    scheduleSleepTimeNotification(hourOfDay, minute);
                 } else {
                     child.setWakeHour(hourOfDay);
                     child.setWakeMinute(minute);
                     buttonSetWakeTime.setText(String.format(Locale.getDefault(), 
                         "Uyanma Saati: %02d:%02d", hourOfDay, minute));
+                    scheduleWakeTimeNotification(hourOfDay, minute);
                 }
                 databaseHelper.updateChild(child);
             },
@@ -173,9 +188,127 @@ public class ChildDetailActivity extends AppCompatActivity {
         timePickerDialog.show();
     }
 
+    private void scheduleSleepTimeNotification(int hour, int minute) {
+        try {
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            if (alarmManager == null) {
+                Log.e(TAG, "AlarmManager is null");
+                return;
+            }
+
+            Intent intent = new Intent(this, AlarmReceiver.class);
+            intent.setAction("com.example.sleepybaby.SLEEP_TIME");
+            intent.putExtra("child_id", childId);
+            intent.putExtra("CHILD_NAME", child.getName());
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            calendar.set(Calendar.SECOND, 0);
+
+            if (calendar.before(Calendar.getInstance())) {
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+            }
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this,
+                childId * 2,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.getTimeInMillis(),
+                        pendingIntent
+                    );
+                } else {
+                    Log.e(TAG, "Cannot schedule exact alarms");
+                    Toast.makeText(this, "Tam zamanlı alarmlar için izin gerekli", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(),
+                    pendingIntent
+                );
+            }
+
+            Log.d(TAG, "Sleep time notification scheduled for: " + calendar.getTime());
+        } catch (Exception e) {
+            Log.e(TAG, "Error scheduling sleep time notification: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void scheduleWakeTimeNotification(int hour, int minute) {
+        try {
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            if (alarmManager == null) {
+                Log.e(TAG, "AlarmManager is null");
+                return;
+            }
+
+            Intent intent = new Intent(this, AlarmReceiver.class);
+            intent.setAction("com.example.sleepybaby.WAKE_TIME");
+            intent.putExtra("child_id", childId);
+            intent.putExtra("CHILD_NAME", child.getName());
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            calendar.set(Calendar.SECOND, 0);
+
+            if (calendar.before(Calendar.getInstance())) {
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+            }
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this,
+                childId * 2 + 1,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (alarmManager.canScheduleExactAlarms()) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.getTimeInMillis(),
+                        pendingIntent
+                    );
+                } else {
+                    Log.e(TAG, "Cannot schedule exact alarms");
+                    Toast.makeText(this, "Tam zamanlı alarmlar için izin gerekli", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(),
+                    pendingIntent
+                );
+            }
+
+            Log.d(TAG, "Wake time notification scheduled for: " + calendar.getTime());
+        } catch (Exception e) {
+            Log.e(TAG, "Error scheduling wake time notification: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     private void loadSleepHistory() {
-        List<SleepRecord> records = databaseHelper.getSleepRecords(childId);
-        sleepHistoryAdapter.setSleepRecords(records);
+        try {
+            List<SleepRecord> records = databaseHelper.getSleepRecords(childId);
+            sleepHistoryAdapter = new SleepHistoryAdapter(this, records);
+            recyclerViewSleepHistory.setAdapter(sleepHistoryAdapter);
+            recyclerViewSleepHistory.setLayoutManager(new LinearLayoutManager(this));
+        } catch (Exception e) {
+            Log.e(TAG, "Error in loadSleepHistory: " + e.getMessage());
+            e.printStackTrace();
+            Toast.makeText(this, "Uyku geçmişi yüklenirken hata oluştu", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

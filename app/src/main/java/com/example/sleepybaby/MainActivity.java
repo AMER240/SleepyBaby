@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerViewChildren);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ChildAdapter(childrenList, this::onChildClick);
+        adapter = new ChildAdapter(this, childrenList, this::showChildDetails);
         recyclerView.setAdapter(adapter);
 
         FloatingActionButton fabAddChild = findViewById(R.id.fabAddChild);
@@ -53,10 +53,10 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    private void onChildClick(Child child) {
-        Intent intent = new Intent(MainActivity.this, ChildDetailActivity.class);
-        intent.putExtra("CHILD_ID", child.getId());
-        intent.putExtra("CHILD_NAME", child.getName());
+    private void showChildDetails(Child child) {
+        Intent intent = new Intent(this, ChildDetailActivity.class);
+        intent.putExtra("child_id", child.getId());
+        intent.putExtra("child_name", child.getName());
         startActivity(intent);
     }
 }

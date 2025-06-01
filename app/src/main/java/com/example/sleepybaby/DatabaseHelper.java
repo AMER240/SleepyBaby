@@ -33,9 +33,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     
     // SleepRecord tablosu için kolonlar
     public static final String COLUMN_CHILD_ID = "childId";
-    public static final String COLUMN_START_TIME = "startTime";
-    public static final String COLUMN_END_TIME = "endTime";
-    public static final String COLUMN_QUALITY = "quality";
+    public static final String COLUMN_SLEEP_TIME = "sleep_time";
+    public static final String COLUMN_WAKE_TIME = "wake_time";
+    public static final String COLUMN_SLEEP_QUALITY = "sleep_quality";
     public static final String COLUMN_NOTES = "notes";
     
     // SleepStatistics tablosu için kolonlar
@@ -46,6 +46,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_LONGEST_SLEEP_MINUTES = "longestSleepMinutes";
     public static final String COLUMN_SHORTEST_SLEEP_MINUTES = "shortestSleepMinutes";
 
+    private static final String CREATE_SLEEP_RECORDS_TABLE = "CREATE TABLE " + TABLE_SLEEP_RECORDS + "("
+            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + COLUMN_CHILD_ID + " INTEGER,"
+            + COLUMN_SLEEP_TIME + " INTEGER,"
+            + COLUMN_WAKE_TIME + " INTEGER,"
+            + COLUMN_SLEEP_QUALITY + " INTEGER,"
+            + COLUMN_NOTES + " TEXT,"
+            + "FOREIGN KEY(" + COLUMN_CHILD_ID + ") REFERENCES " + TABLE_CHILDREN + "(" + COLUMN_ID + ")"
+            + ")";
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -53,30 +63,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // Çocuklar tablosu
-        db.execSQL("CREATE TABLE children (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "name TEXT NOT NULL," +
-                "birth_date INTEGER NOT NULL," +
-                "gender TEXT NOT NULL," +
-                "sleep_hour INTEGER NOT NULL," +
-                "sleep_minute INTEGER NOT NULL," +
-                "wake_hour INTEGER NOT NULL," +
-                "wake_minute INTEGER NOT NULL)");
+        db.execSQL("CREATE TABLE " + TABLE_CHILDREN + " (" +
+                COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                COLUMN_NAME + " TEXT NOT NULL," +
+                COLUMN_BIRTH_DATE + " INTEGER NOT NULL," +
+                COLUMN_GENDER + " TEXT NOT NULL," +
+                COLUMN_SLEEP_HOUR + " INTEGER NOT NULL," +
+                COLUMN_SLEEP_MINUTE + " INTEGER NOT NULL," +
+                COLUMN_WAKE_HOUR + " INTEGER NOT NULL," +
+                COLUMN_WAKE_MINUTE + " INTEGER NOT NULL)");
 
         // Uyku kayıtları tablosu
-        db.execSQL("CREATE TABLE sleep_records (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "child_id INTEGER NOT NULL," +
-                "sleep_time INTEGER NOT NULL," +
-                "wake_time INTEGER NOT NULL," +
-                "sleep_quality INTEGER NOT NULL," +
-                "FOREIGN KEY (child_id) REFERENCES children(id) ON DELETE CASCADE)");
+        db.execSQL(CREATE_SLEEP_RECORDS_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS sleep_records");
-        db.execSQL("DROP TABLE IF EXISTS children");
+        // Eski tabloları sil
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SLEEP_RECORDS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHILDREN);
+
+        // Tabloları yeniden oluştur
         onCreate(db);
     }
 
@@ -193,37 +200,63 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public long addSleepRecord(SleepRecord record) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("child_id", record.getChildId());
-        values.put("sleep_time", record.getStartTime().getTime());
-        values.put("wake_time", record.getEndTime().getTime());
-        values.put("sleep_quality", record.getQuality());
-        values.put("notes", record.getNotes());
-        return db.insert("sleep_records", null, values);
+
+        values.put(COLUMN_CHILD_ID, record.getChildId());
+        values.put(COLUMN_SLEEP_TIME, record.getStartTime().getTime());
+        values.put(COLUMN_WAKE_TIME, record.getEndTime().getTime());
+        values.put(COLUMN_SLEEP_QUALITY, record.getQuality());
+        values.put(COLUMN_NOTES, record.getNotes());
+
+        return db.insert(TABLE_SLEEP_RECORDS, null, values);
     }
     
     // Çocuğun uyku kayıtlarını getirme
     public List<SleepRecord> getSleepRecords(int childId) {
         List<SleepRecord> records = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("sleep_records",
-                new String[]{"id", "child_id", "sleep_time", "wake_time", "sleep_quality", "notes"},
-                "child_id = ?",
-                new String[]{String.valueOf(childId)},
-                null, null, "sleep_time DESC");
 
-        if (cursor.moveToFirst()) {
-            do {
-                SleepRecord record = new SleepRecord();
-                record.setId(cursor.getInt(0));
-                record.setChildId(cursor.getInt(1));
-                record.setStartTime(new Date(cursor.getLong(2)));
-                record.setEndTime(new Date(cursor.getLong(3)));
-                record.setQuality(cursor.getInt(4));
-                record.setNotes(cursor.getString(5));
-                records.add(record);
-            } while (cursor.moveToNext());
+        try {
+            String[] columns = {
+                COLUMN_ID,
+                COLUMN_CHILD_ID,
+                COLUMN_SLEEP_TIME,
+                COLUMN_WAKE_TIME,
+                COLUMN_SLEEP_QUALITY,
+                COLUMN_NOTES
+            };
+
+            String selection = COLUMN_CHILD_ID + " = ?";
+            String[] selectionArgs = {String.valueOf(childId)};
+            String orderBy = COLUMN_SLEEP_TIME + " DESC";
+
+            Cursor cursor = db.query(
+                TABLE_SLEEP_RECORDS,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                orderBy
+            );
+
+            if (cursor.moveToFirst()) {
+                do {
+                    SleepRecord record = new SleepRecord();
+                    record.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)));
+                    record.setChildId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CHILD_ID)));
+                    record.setStartTime(new Date(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_SLEEP_TIME))));
+                    record.setEndTime(new Date(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_WAKE_TIME))));
+                    record.setQuality(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SLEEP_QUALITY)));
+                    record.setNotes(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NOTES)));
+                    records.add(record);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        } catch (Exception e) {
+            Log.e(TAG, "Error in getSleepRecords: " + e.getMessage());
+            e.printStackTrace();
         }
-        cursor.close();
+
         return records;
     }
     
@@ -234,9 +267,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         double totalQuality = 0;
         int recordCount = 0;
 
-        Cursor cursor = db.query("sleep_records",
-                new String[]{"sleep_time", "wake_time", "sleep_quality"},
-                "child_id = ? AND sleep_time >= ?",
+        Cursor cursor = db.query(TABLE_SLEEP_RECORDS,
+                new String[]{COLUMN_SLEEP_TIME, COLUMN_WAKE_TIME, COLUMN_SLEEP_QUALITY},
+                COLUMN_CHILD_ID + " = ? AND " + COLUMN_SLEEP_TIME + " >= ?",
                 new String[]{String.valueOf(childId), String.valueOf(startDate.getTime())},
                 null, null, null);
 
@@ -244,7 +277,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             do {
                 long sleepTime = cursor.getLong(0);
                 long wakeTime = cursor.getLong(1);
-                int quality = cursor.getInt(2);
+                double quality = cursor.getDouble(2);
 
                 // Uyku süresini hesapla (dakika cinsinden)
                 long duration = (wakeTime - sleepTime) / (60 * 1000);
@@ -362,20 +395,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<SleepRecord> records = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_SLEEP_RECORDS,
-                new String[]{"id", "child_id", "sleep_time", "wake_time", "sleep_quality", "notes"},
-                "child_id = ? AND sleep_time >= ? AND sleep_time <= ?",
+                new String[]{COLUMN_ID, COLUMN_CHILD_ID, COLUMN_SLEEP_TIME, COLUMN_WAKE_TIME, COLUMN_SLEEP_QUALITY, COLUMN_NOTES},
+                COLUMN_CHILD_ID + " = ? AND " + COLUMN_SLEEP_TIME + " >= ? AND " + COLUMN_SLEEP_TIME + " <= ?",
                 new String[]{String.valueOf(childId), String.valueOf(startDate), String.valueOf(endDate)},
-                null, null, "sleep_time DESC");
+                null, null, COLUMN_SLEEP_TIME + " DESC");
 
         if (cursor.moveToFirst()) {
             do {
                 SleepRecord record = new SleepRecord();
-                record.setId(cursor.getInt(0));
-                record.setChildId(cursor.getInt(1));
-                record.setStartTime(new Date(cursor.getLong(2)));
-                record.setEndTime(new Date(cursor.getLong(3)));
-                record.setQuality(cursor.getInt(4));
-                record.setNotes(cursor.getString(5));
+                record.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)));
+                record.setChildId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CHILD_ID)));
+                record.setStartTime(new Date(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_SLEEP_TIME))));
+                record.setEndTime(new Date(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_WAKE_TIME))));
+                record.setQuality(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SLEEP_QUALITY)));
+                record.setNotes(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NOTES)));
                 records.add(record);
             } while (cursor.moveToNext());
         }

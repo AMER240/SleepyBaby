@@ -1,9 +1,9 @@
 package com.example.sleepybaby;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,60 +13,52 @@ import java.util.Locale;
 
 public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapter.ViewHolder> {
     private List<SleepRecord> sleepRecords;
-    private final SimpleDateFormat dateFormat;
-    private final SimpleDateFormat timeFormat;
+    private Context context;
+    private SimpleDateFormat dateFormat;
+    private SimpleDateFormat timeFormat;
 
-    public SleepHistoryAdapter(List<SleepRecord> sleepRecords) {
+    public SleepHistoryAdapter(Context context, List<SleepRecord> sleepRecords) {
+        this.context = context;
         this.sleepRecords = sleepRecords;
-        this.dateFormat = new SimpleDateFormat("dd MMMM yyyy", new Locale("tr"));
-        this.timeFormat = new SimpleDateFormat("HH:mm", new Locale("tr"));
-    }
-
-    public void setSleepRecords(List<SleepRecord> sleepRecords) {
-        this.sleepRecords = sleepRecords;
-        notifyDataSetChanged();
+        this.dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+        this.timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-            .inflate(R.layout.item_sleep_record, parent, false);
+                .inflate(R.layout.item_sleep_record, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         SleepRecord record = sleepRecords.get(position);
-        
-        // Tarih ve saat formatlaması
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        
         holder.textViewDate.setText(dateFormat.format(record.getStartTime()));
-        holder.textViewTime.setText(String.format("%s - %s", 
+        holder.textViewTime.setText(String.format("%s - %s",
             timeFormat.format(record.getStartTime()),
             timeFormat.format(record.getEndTime())));
-        
+
+        // Uyku kalitesi
+        int quality = record.getQuality();
+        String qualityText;
+        if (quality >= 8) {
+            qualityText = "Çok İyi";
+        } else if (quality >= 6) {
+            qualityText = "İyi";
+        } else if (quality >= 4) {
+            qualityText = "Orta";
+        } else {
+            qualityText = "İyileştirilmeli";
+        }
+        holder.textViewQuality.setText("Kalite: " + qualityText);
+
         // Uyku süresi
         long durationMinutes = record.getDurationMinutes();
         int hours = (int) (durationMinutes / 60);
         int minutes = (int) (durationMinutes % 60);
-        holder.textViewDuration.setText(String.format("%d saat %d dakika", hours, minutes));
-        
-        // Uyku kalitesi
-        int quality = record.getQuality();
-        String qualityText;
-        if (quality >= 4) {
-            qualityText = "Çok İyi";
-        } else if (quality >= 3) {
-            qualityText = "İyi";
-        } else if (quality >= 2) {
-            qualityText = "Orta";
-        } else {
-            qualityText = "Kötü";
-        }
-        holder.textViewQuality.setText(qualityText);
+        holder.textViewDuration.setText(String.format("Süre: %d saat %d dakika", hours, minutes));
 
         // Notlar
         if (record.getNotes() != null && !record.getNotes().isEmpty()) {
@@ -82,19 +74,24 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
         return sleepRecords.size();
     }
 
+    public void updateSleepRecords(List<SleepRecord> newRecords) {
+        this.sleepRecords = newRecords;
+        notifyDataSetChanged();
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textViewDate;
-        TextView textViewDuration;
         TextView textViewTime;
         TextView textViewQuality;
+        TextView textViewDuration;
         TextView textViewNotes;
 
         ViewHolder(View itemView) {
             super(itemView);
             textViewDate = itemView.findViewById(R.id.textViewDate);
-            textViewDuration = itemView.findViewById(R.id.textViewDuration);
             textViewTime = itemView.findViewById(R.id.textViewTime);
             textViewQuality = itemView.findViewById(R.id.textViewQuality);
+            textViewDuration = itemView.findViewById(R.id.textViewDuration);
             textViewNotes = itemView.findViewById(R.id.textViewNotes);
         }
     }

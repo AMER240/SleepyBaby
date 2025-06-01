@@ -1,9 +1,11 @@
 package com.example.sleepybaby;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
@@ -15,14 +17,18 @@ import java.text.ParseException;
 public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHolder> {
     private List<Child> children;
     private OnChildClickListener listener;
+    private DatabaseHelper databaseHelper;
+    private Context context;
 
     public interface OnChildClickListener {
         void onChildClick(Child child);
     }
 
-    public ChildAdapter(List<Child> children, OnChildClickListener listener) {
+    public ChildAdapter(Context context, List<Child> children, OnChildClickListener listener) {
+        this.context = context;
         this.children = children;
         this.listener = listener;
+        this.databaseHelper = new DatabaseHelper(context);
     }
 
     @NonNull
@@ -44,19 +50,37 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
         return children.size();
     }
 
+    public void removeChild(int position) {
+        if (position >= 0 && position < children.size()) {
+            Child child = children.get(position);
+            databaseHelper.deleteChild(child.getId());
+            children.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
     class ChildViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewName;
         private TextView textViewAge;
+        private ImageButton buttonDelete;
 
         ChildViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewName = itemView.findViewById(R.id.textViewName);
             textViewAge = itemView.findViewById(R.id.textViewAge);
+            buttonDelete = itemView.findViewById(R.id.buttonDelete);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
                     listener.onChildClick(children.get(position));
+                }
+            });
+
+            buttonDelete.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    removeChild(position);
                 }
             });
         }

@@ -5,21 +5,18 @@ import java.util.Date;
 public class SleepRecord {
     private int id;
     private int childId;
-    private Date sleepTime;
-    private Date wakeTime;
-    private int sleepQuality;
+    private Date startTime;
+    private Date endTime;
+    private int quality;
     private String notes;
 
     public SleepRecord() {
-        // Boş constructor
-    }
-
-    public SleepRecord(int id, int childId, Date sleepTime, Date wakeTime, int sleepQuality) {
-        this.id = id;
-        this.childId = childId;
-        this.sleepTime = sleepTime;
-        this.wakeTime = wakeTime;
-        this.sleepQuality = sleepQuality;
+        this.id = -1;
+        this.childId = -1;
+        this.startTime = new Date();
+        this.endTime = new Date();
+        this.quality = 0;
+        this.notes = "";
     }
 
     public int getId() {
@@ -39,27 +36,27 @@ public class SleepRecord {
     }
 
     public Date getStartTime() {
-        return sleepTime;
+        return startTime;
     }
 
-    public void setStartTime(Date sleepTime) {
-        this.sleepTime = sleepTime;
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
     }
 
     public Date getEndTime() {
-        return wakeTime;
+        return endTime;
     }
 
-    public void setEndTime(Date wakeTime) {
-        this.wakeTime = wakeTime;
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     public int getQuality() {
-        return sleepQuality;
+        return quality;
     }
 
-    public void setQuality(int sleepQuality) {
-        this.sleepQuality = sleepQuality;
+    public void setQuality(int quality) {
+        this.quality = quality;
     }
 
     public String getNotes() {
@@ -70,10 +67,8 @@ public class SleepRecord {
         this.notes = notes;
     }
 
-    // Uyku süresini dakika cinsinden hesapla
     public long getDurationMinutes() {
-        if (sleepTime == null || wakeTime == null) return 0;
-        return (wakeTime.getTime() - sleepTime.getTime()) / (60 * 1000);
+        return (endTime.getTime() - startTime.getTime()) / (60 * 1000);
     }
 
     public void setDurationMinutes(int minutes) {

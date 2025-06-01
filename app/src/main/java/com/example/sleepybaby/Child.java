@@ -1,5 +1,7 @@
 package com.example.sleepybaby;
 
+import java.util.Calendar;
+
 public class Child {
     private int id;
     private String name;
@@ -83,12 +85,17 @@ public class Child {
     }
 
     public int getAge() {
-        java.util.Calendar now = java.util.Calendar.getInstance();
-        int currentYear = now.get(java.util.Calendar.YEAR);
+        Calendar birthDate = Calendar.getInstance();
+        birthDate.setTimeInMillis(this.birthDate);
+        Calendar today = Calendar.getInstance();
         
-        // birthDate bir yıl değeri olarak saklanıyor
-        int birthYear = (int) birthDate;
+        int age = today.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR);
         
-        return currentYear - birthYear;
+        // Doğum günü henüz gelmediyse yaşı bir azalt
+        if (today.get(Calendar.DAY_OF_YEAR) < birthDate.get(Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
+        
+        return age;
     }
 }

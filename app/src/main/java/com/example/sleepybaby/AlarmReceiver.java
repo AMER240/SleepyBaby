@@ -21,57 +21,70 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "Alarm received: " + intent.getAction());
-        
-        if (intent.getAction() == null || !intent.getAction().equals("com.example.sleepybaby.ALARM_TRIGGER")) {
-            Log.e(TAG, "Invalid action received: " + intent.getAction());
-            return;
-        }
-
         try {
-            // Wake Lock al
-            PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            wakeLock = powerManager.newWakeLock(
-                PowerManager.FULL_WAKE_LOCK |
-                PowerManager.ACQUIRE_CAUSES_WAKEUP |
-                PowerManager.ON_AFTER_RELEASE,
-                "SleepyBaby:AlarmWakeLock"
-            );
-            wakeLock.acquire(30*60*1000L); // 30 minutes
+            String action = intent.getAction();
+            if (action == null) return;
 
-            // Alarm bilgilerini al
-            String childName = intent.getStringExtra("CHILD_NAME");
-            long alarmId = intent.getLongExtra("ALARM_ID", -1);
-            
-            Log.d(TAG, "Processing alarm for child: " + childName + ", alarm ID: " + alarmId);
+            DatabaseHelper dbHelper = new DatabaseHelper(context);
+            int childId = intent.getIntExtra("child_id", -1);
+            if (childId == -1) return;
 
-            // Alarm aktivitesini başlat
-            Intent alarmIntent = new Intent(context, ActiveAlarmActivity.class);
-            alarmIntent.addFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK |
-                Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                Intent.FLAG_ACTIVITY_SINGLE_TOP |
-                Intent.FLAG_ACTIVITY_NO_USER_ACTION
-            );
-            
-            // Ekran kilidini aç
-            KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-            if (keyguardManager != null && keyguardManager.isKeyguardLocked()) {
-                alarmIntent.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+            Child child = dbHelper.getChild(childId);
+            if (child == null) return;
+
+            NotificationHelper notificationHelper = new NotificationHelper(context);
+
+            if (action.equals("com.example.sleepybaby.SLEEP_TIME")) {
+                notificationHelper.showSleepTimeNotification(child.getName());
+            } else if (action.equals("com.example.sleepybaby.WAKE_TIME")) {
+                notificationHelper.showWakeTimeNotification(child.getName());
+            } else if (action.equals("com.example.sleepybaby.ALARM_TRIGGER")) {
+                Log.d(TAG, "Alarm received: " + action);
+                
+                // Wake Lock al
+                PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+                wakeLock = powerManager.newWakeLock(
+                    PowerManager.FULL_WAKE_LOCK |
+                    PowerManager.ACQUIRE_CAUSES_WAKEUP |
+                    PowerManager.ON_AFTER_RELEASE,
+                    "SleepyBaby:AlarmWakeLock"
+                );
+                wakeLock.acquire(30*60*1000L); // 30 minutes
+
+                // Alarm bilgilerini al
+                String childName = intent.getStringExtra("CHILD_NAME");
+                long alarmId = intent.getLongExtra("ALARM_ID", -1);
+                
+                Log.d(TAG, "Processing alarm for child: " + childName + ", alarm ID: " + alarmId);
+
+                // Alarm aktivitesini başlat
+                Intent alarmIntent = new Intent(context, ActiveAlarmActivity.class);
+                alarmIntent.addFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK |
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_SINGLE_TOP |
+                    Intent.FLAG_ACTIVITY_NO_USER_ACTION
+                );
+                
+                // Ekran kilidini aç
+                KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+                if (keyguardManager != null && keyguardManager.isKeyguardLocked()) {
+                    alarmIntent.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+                }
+                
+                alarmIntent.putExtra("CHILD_NAME", childName);
+                alarmIntent.putExtra("ALARM_ID", alarmId);
+                context.startActivity(alarmIntent);
+
+                // Titreşimi başlat
+                startVibration(context);
+
+                // Alarm sesini çal
+                playAlarmSound(context);
             }
-            
-            alarmIntent.putExtra("CHILD_NAME", childName);
-            alarmIntent.putExtra("ALARM_ID", alarmId);
-            context.startActivity(alarmIntent);
-
-            // Titreşimi başlat
-            startVibration(context);
-
-            // Alarm sesini çal
-            playAlarmSound(context);
-
         } catch (Exception e) {
-            Log.e(TAG, "Error processing alarm: " + e.getMessage(), e);
+            Log.e(TAG, "Error in onReceive: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

@@ -78,7 +78,9 @@
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.example.sleepybaby.ALARM_TRIGGER" />
+                <action android:name="com.example.sleepybaby.SLEEP_TIME" />
+                <action android:name="com.example.sleepybaby.WAKE_TIME" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 

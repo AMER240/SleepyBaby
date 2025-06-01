@@ -2,6 +2,7 @@ package com.example.sleepybaby;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class SleepHistoryActivity extends AppCompatActivity {
+    private static final String TAG = "SleepHistoryActivity";
     private TextView textViewTitle;
     private MaterialButtonToggleGroup toggleGroupPeriod;
     private MaterialButton buttonWeek;
@@ -28,9 +30,13 @@ public class SleepHistoryActivity extends AppCompatActivity {
     private RecyclerView recyclerViewSleepHistory;
     private SleepHistoryAdapter adapter;
     private DatabaseHelper dbHelper;
-    private long childId;
+    private int childId;
     private String childName;
     private int selectedPeriod = 7; // Varsayılan olarak haftalık
+
+    private enum FilterType {
+        WEEK, MONTH, YEAR
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +54,10 @@ public class SleepHistoryActivity extends AppCompatActivity {
         findViewById(R.id.buttonBack).setOnClickListener(v -> onBackPressed());
 
         // Intent'ten verileri al
-        childId = getIntent().getLongExtra("CHILD_ID", -1);
-        childName = getIntent().getStringExtra("CHILD_NAME");
-
+        childId = getIntent().getIntExtra("child_id", -1);
+        childName = getIntent().getStringExtra("child_name");
         if (childId == -1 || childName == null) {
-            Toast.makeText(this, "Çocuk bilgileri alınamadı", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Geçersiz çocuk bilgisi", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -66,25 +71,38 @@ public class SleepHistoryActivity extends AppCompatActivity {
 
         // RecyclerView'ı ayarla
         recyclerViewSleepHistory.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new SleepHistoryAdapter(new ArrayList<>());
+        adapter = new SleepHistoryAdapter(this, new ArrayList<>());
         recyclerViewSleepHistory.setAdapter(adapter);
 
-        // Filtre butonlarını ayarla
-        toggleGroupPeriod.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-            if (isChecked) {
-                if (checkedId == R.id.buttonWeek) {
-                    selectedPeriod = 7;
-                } else if (checkedId == R.id.buttonMonth) {
-                    selectedPeriod = 30;
-                } else if (checkedId == R.id.buttonYear) {
-                    selectedPeriod = 365;
-                }
-                loadSleepRecords();
-            }
-        });
+        // Uyku kayıtlarını yükle
+        loadSleepRecords();
 
-        // Varsayılan olarak haftalık seçili
-        buttonWeek.setChecked(true);
+        // Filtreleme butonlarını ayarla
+        buttonWeek.setOnClickListener(v -> filterRecords(FilterType.WEEK));
+        buttonMonth.setOnClickListener(v -> filterRecords(FilterType.MONTH));
+        buttonYear.setOnClickListener(v -> filterRecords(FilterType.YEAR));
+    }
+
+    private void filterRecords(FilterType type) {
+        Calendar calendar = Calendar.getInstance();
+        long endTime = calendar.getTimeInMillis();
+        
+        switch (type) {
+            case WEEK:
+                calendar.add(Calendar.DAY_OF_YEAR, -7);
+                break;
+            case MONTH:
+                calendar.add(Calendar.MONTH, -1);
+                break;
+            case YEAR:
+                calendar.add(Calendar.YEAR, -1);
+                break;
+        }
+        
+        long startTime = calendar.getTimeInMillis();
+        List<SleepRecord> filteredRecords = dbHelper.getSleepRecords(childId, startTime, endTime);
+        adapter.updateSleepRecords(filteredRecords);
+        updateStatistics(filteredRecords);
     }
 
     private void initializeViews() {
@@ -100,15 +118,15 @@ public class SleepHistoryActivity extends AppCompatActivity {
     }
 
     private void loadSleepRecords() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -7); // Son 7 günün kayıtlarını getir
-        Date startDate = calendar.getTime();
-        
-        List<SleepRecord> records = dbHelper.getSleepRecords(childId, startDate.getTime(), new Date().getTime());
-        adapter.setSleepRecords(records);
-        
-        // İstatistikleri güncelle
-        updateStatistics(records);
+        try {
+            List<SleepRecord> records = dbHelper.getSleepRecords(childId);
+            adapter.updateSleepRecords(records);
+            updateStatistics(records);
+        } catch (Exception e) {
+            Log.e(TAG, "Error in loadSleepRecords: " + e.getMessage());
+            e.printStackTrace();
+            Toast.makeText(this, "Uyku kayıtları yüklenirken hata oluştu", Toast.LENGTH_SHORT).show();
+        }
     }
     
     private void updateStatistics(List<SleepRecord> records) {
