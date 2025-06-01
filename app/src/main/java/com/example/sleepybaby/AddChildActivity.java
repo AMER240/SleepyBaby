@@ -19,7 +19,7 @@ import java.util.Locale;
 
 public class AddChildActivity extends AppCompatActivity {
     private static final String TAG = "AddChildActivity";
-    
+
     private TextInputEditText editTextName;
     private TextInputEditText editTextBirthDate;
     private MaterialButton buttonGenderMale;
@@ -111,7 +111,7 @@ public class AddChildActivity extends AppCompatActivity {
                     editTextName.requestFocus();
                     return;
                 }
-                
+
                 // Doğum tarihi
                 String birthDateStr = editTextBirthDate.getText().toString().trim();
                 if (birthDateStr.isEmpty()) {
@@ -124,7 +124,7 @@ public class AddChildActivity extends AppCompatActivity {
                     Toast.makeText(this, "Lütfen cinsiyet seçiniz", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                
+
                 Log.d(TAG, "Input values - Name: " + name + ", BirthDate: " + birthDateStr + 
                       ", Gender: " + selectedGender);
                 

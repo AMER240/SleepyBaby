@@ -24,7 +24,7 @@ import java.util.Locale;
 
 public class AddSleepRecordActivity extends AppCompatActivity {
     private static final String TAG = "AddSleepRecordActivity";
-    
+
     private Button buttonSelectDate;
     private Button buttonSelectSleepTime;
     private Button buttonSelectWakeTime;
@@ -139,7 +139,7 @@ public class AddSleepRecordActivity extends AppCompatActivity {
         );
         datePickerDialog.show();
     }
-    
+
     private void showTimePicker(boolean isStartTime) {
         Calendar calendar = isStartTime ? sleepStartTime : sleepEndTime;
         TimePickerDialog timePickerDialog = new TimePickerDialog(
