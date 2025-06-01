@@ -12,6 +12,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -78,7 +79,7 @@ public class SleepHistoryActivity extends AppCompatActivity {
                 } else if (checkedId == R.id.buttonYear) {
                     selectedPeriod = 365;
                 }
-                loadSleepHistory();
+                loadSleepRecords();
             }
         });
 
@@ -98,58 +99,52 @@ public class SleepHistoryActivity extends AppCompatActivity {
         recyclerViewSleepHistory = findViewById(R.id.recyclerViewSleepHistory);
     }
 
-    private void loadSleepHistory() {
-        // Seçilen periyoda göre tarih aralığını hesapla
-        Calendar endDate = Calendar.getInstance();
-        Calendar startDate = Calendar.getInstance();
-        startDate.add(Calendar.DAY_OF_MONTH, -selectedPeriod);
-
-        // Uyku kayıtlarını getir
-        List<SleepRecord> records = dbHelper.getSleepRecords(childId, startDate.getTimeInMillis(), 
-            endDate.getTimeInMillis());
+    private void loadSleepRecords() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -7); // Son 7 günün kayıtlarını getir
+        Date startDate = calendar.getTime();
+        
+        List<SleepRecord> records = dbHelper.getSleepRecords(childId, startDate.getTime(), new Date().getTime());
         adapter.setSleepRecords(records);
-
+        
         // İstatistikleri güncelle
         updateStatistics(records);
     }
-
+    
     private void updateStatistics(List<SleepRecord> records) {
         if (records.isEmpty()) {
-            textViewAverageSleep.setText("Henüz uyku kaydı yok");
-            textViewSleepQuality.setText("Uyku kalitesi: -");
+            textViewAverageSleep.setText("0 saat");
+            textViewSleepQuality.setText("Veri yok");
             textViewBestSleep.setText("En iyi uyku: -");
             return;
         }
-
+        
         // Ortalama uyku süresi
-        double totalHours = 0;
-        for (SleepRecord record : records) {
-            totalHours += record.getDurationMinutes() / 60.0;
-        }
-        double avgHours = totalHours / records.size();
-        textViewAverageSleep.setText(String.format(Locale.getDefault(), 
-            "Ortalama uyku süresi: %.1f saat", avgHours));
-
-        // Ortalama uyku kalitesi
+        long totalMinutes = 0;
         double totalQuality = 0;
+        
         for (SleepRecord record : records) {
+            totalMinutes += record.getDurationMinutes();
             totalQuality += record.getQuality();
         }
-        double avgQuality = totalQuality / records.size();
+        
+        int averageHours = (int) (totalMinutes / records.size() / 60);
+        int averageMinutes = (int) ((totalMinutes / records.size()) % 60);
+        textViewAverageSleep.setText(String.format("%d saat %d dakika", averageHours, averageMinutes));
+        
+        // Ortalama uyku kalitesi
+        double averageQuality = totalQuality / records.size();
         String qualityText;
-        if (avgQuality >= 4.5) {
+        if (averageQuality >= 4) {
             qualityText = "Çok İyi";
-        } else if (avgQuality >= 3.5) {
+        } else if (averageQuality >= 3) {
             qualityText = "İyi";
-        } else if (avgQuality >= 2.5) {
+        } else if (averageQuality >= 2) {
             qualityText = "Orta";
-        } else if (avgQuality >= 1.5) {
-            qualityText = "Kötü";
         } else {
-            qualityText = "Çok Kötü";
+            qualityText = "Kötü";
         }
-        textViewSleepQuality.setText(String.format(Locale.getDefault(), 
-            "Uyku kalitesi: %s (%.1f/5)", qualityText, avgQuality));
+        textViewSleepQuality.setText(qualityText);
 
         // En iyi uyku
         SleepRecord bestSleep = records.get(0);
@@ -168,6 +163,6 @@ public class SleepHistoryActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadSleepHistory();
+        loadSleepRecords();
     }
 } 

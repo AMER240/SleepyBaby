@@ -53,11 +53,9 @@ public class ChildDetailActivity extends AppCompatActivity {
             findViewById(R.id.buttonBack).setOnClickListener(v -> onBackPressed());
 
             // Intent'ten verileri al
-            childId = getIntent().getLongExtra("CHILD_ID", -1);
-            String childName = getIntent().getStringExtra("CHILD_NAME");
-
-            if (childId == -1 || childName == null) {
-                Toast.makeText(this, "Çocuk bilgileri alınamadı", Toast.LENGTH_SHORT).show();
+            childId = getIntent().getIntExtra("CHILD_ID", -1);
+            if (childId == -1) {
+                Toast.makeText(this, "Geçersiz çocuk ID'si", Toast.LENGTH_SHORT).show();
                 finish();
                 return;
             }
@@ -70,7 +68,7 @@ public class ChildDetailActivity extends AppCompatActivity {
             loadChildDetails();
 
             // Çocuk bilgilerini göster
-            textViewTitle.setText(childName);
+            textViewTitle.setText(child.getName());
 
             // Uyku saati ayarlama
             buttonSetSleepTime.setOnClickListener(v -> showTimePicker(true));
@@ -88,7 +86,7 @@ public class ChildDetailActivity extends AppCompatActivity {
             fabAddSleepRecord.setOnClickListener(v -> {
                 Intent intent = new Intent(this, AddSleepRecordActivity.class);
                 intent.putExtra("CHILD_ID", childId);
-                intent.putExtra("CHILD_NAME", childName);
+                intent.putExtra("CHILD_NAME", child.getName());
                 startActivity(intent);
             });
 

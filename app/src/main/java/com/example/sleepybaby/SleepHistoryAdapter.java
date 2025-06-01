@@ -39,33 +39,32 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         SleepRecord record = sleepRecords.get(position);
         
-        // Tarih ve süre
+        // Tarih ve saat formatlaması
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        
         holder.textViewDate.setText(dateFormat.format(record.getStartTime()));
-        holder.textViewDuration.setText(String.format(Locale.getDefault(), 
-            "%.1f saat", record.getDurationMinutes() / 60.0));
-
-        // Başlangıç ve bitiş zamanları
-        holder.textViewStartTime.setText(timeFormat.format(record.getStartTime()));
-        holder.textViewEndTime.setText(timeFormat.format(record.getEndTime()));
-
+        holder.textViewTime.setText(String.format("%s - %s", 
+            timeFormat.format(record.getStartTime()),
+            timeFormat.format(record.getEndTime())));
+        
+        // Uyku süresi
+        long durationMinutes = record.getDurationMinutes();
+        int hours = (int) (durationMinutes / 60);
+        int minutes = (int) (durationMinutes % 60);
+        holder.textViewDuration.setText(String.format("%d saat %d dakika", hours, minutes));
+        
         // Uyku kalitesi
-        holder.ratingBarQuality.setRating(record.getQuality());
+        int quality = record.getQuality();
         String qualityText;
-        switch (record.getQuality()) {
-            case 5:
-                qualityText = "Çok İyi";
-                break;
-            case 4:
-                qualityText = "İyi";
-                break;
-            case 3:
-                qualityText = "Orta";
-                break;
-            case 2:
-                qualityText = "Kötü";
-                break;
-            default:
-                qualityText = "Çok Kötü";
+        if (quality >= 4) {
+            qualityText = "Çok İyi";
+        } else if (quality >= 3) {
+            qualityText = "İyi";
+        } else if (quality >= 2) {
+            qualityText = "Orta";
+        } else {
+            qualityText = "Kötü";
         }
         holder.textViewQuality.setText(qualityText);
 
@@ -86,9 +85,7 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textViewDate;
         TextView textViewDuration;
-        TextView textViewStartTime;
-        TextView textViewEndTime;
-        RatingBar ratingBarQuality;
+        TextView textViewTime;
         TextView textViewQuality;
         TextView textViewNotes;
 
@@ -96,9 +93,7 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
             super(itemView);
             textViewDate = itemView.findViewById(R.id.textViewDate);
             textViewDuration = itemView.findViewById(R.id.textViewDuration);
-            textViewStartTime = itemView.findViewById(R.id.textViewStartTime);
-            textViewEndTime = itemView.findViewById(R.id.textViewEndTime);
-            ratingBarQuality = itemView.findViewById(R.id.ratingBarQuality);
+            textViewTime = itemView.findViewById(R.id.textViewTime);
             textViewQuality = itemView.findViewById(R.id.textViewQuality);
             textViewNotes = itemView.findViewById(R.id.textViewNotes);
         }

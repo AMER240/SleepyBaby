@@ -194,9 +194,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("child_id", record.getChildId());
-        values.put("sleep_time", record.getSleepTime().getTime());
-        values.put("wake_time", record.getWakeTime().getTime());
-        values.put("sleep_quality", record.getSleepQuality());
+        values.put("sleep_time", record.getStartTime().getTime());
+        values.put("wake_time", record.getEndTime().getTime());
+        values.put("sleep_quality", record.getQuality());
+        values.put("notes", record.getNotes());
         return db.insert("sleep_records", null, values);
     }
     
@@ -205,20 +206,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<SleepRecord> records = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query("sleep_records",
-                new String[]{"id", "child_id", "sleep_time", "wake_time", "sleep_quality"},
+                new String[]{"id", "child_id", "sleep_time", "wake_time", "sleep_quality", "notes"},
                 "child_id = ?",
                 new String[]{String.valueOf(childId)},
                 null, null, "sleep_time DESC");
 
         if (cursor.moveToFirst()) {
             do {
-                SleepRecord record = new SleepRecord(
-                    cursor.getInt(0),
-                    cursor.getInt(1),
-                    new Date(cursor.getLong(2)),
-                    new Date(cursor.getLong(3)),
-                    cursor.getInt(4)
-                );
+                SleepRecord record = new SleepRecord();
+                record.setId(cursor.getInt(0));
+                record.setChildId(cursor.getInt(1));
+                record.setStartTime(new Date(cursor.getLong(2)));
+                record.setEndTime(new Date(cursor.getLong(3)));
+                record.setQuality(cursor.getInt(4));
+                record.setNotes(cursor.getString(5));
                 records.add(record);
             } while (cursor.moveToNext());
         }
@@ -371,9 +372,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 SleepRecord record = new SleepRecord();
                 record.setId(cursor.getInt(0));
                 record.setChildId(cursor.getInt(1));
-                record.setSleepTime(new Date(cursor.getLong(2)));
-                record.setWakeTime(new Date(cursor.getLong(3)));
-                record.setSleepQuality(cursor.getInt(4));
+                record.setStartTime(new Date(cursor.getLong(2)));
+                record.setEndTime(new Date(cursor.getLong(3)));
+                record.setQuality(cursor.getInt(4));
                 record.setNotes(cursor.getString(5));
                 records.add(record);
             } while (cursor.moveToNext());

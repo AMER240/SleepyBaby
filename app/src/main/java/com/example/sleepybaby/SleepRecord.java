@@ -38,27 +38,27 @@ public class SleepRecord {
         this.childId = childId;
     }
 
-    public Date getSleepTime() {
+    public Date getStartTime() {
         return sleepTime;
     }
 
-    public void setSleepTime(Date sleepTime) {
+    public void setStartTime(Date sleepTime) {
         this.sleepTime = sleepTime;
     }
 
-    public Date getWakeTime() {
+    public Date getEndTime() {
         return wakeTime;
     }
 
-    public void setWakeTime(Date wakeTime) {
+    public void setEndTime(Date wakeTime) {
         this.wakeTime = wakeTime;
     }
 
-    public int getSleepQuality() {
+    public int getQuality() {
         return sleepQuality;
     }
 
-    public void setSleepQuality(int sleepQuality) {
+    public void setQuality(int sleepQuality) {
         this.sleepQuality = sleepQuality;
     }
 
@@ -71,7 +71,7 @@ public class SleepRecord {
     }
 
     // Uyku süresini dakika cinsinden hesapla
-    public long getDurationInMinutes() {
+    public long getDurationMinutes() {
         if (sleepTime == null || wakeTime == null) return 0;
         return (wakeTime.getTime() - sleepTime.getTime()) / (60 * 1000);
     }

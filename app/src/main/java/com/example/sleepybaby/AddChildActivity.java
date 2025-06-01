@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ public class AddChildActivity extends AppCompatActivity {
     private Button buttonSelectSleepTime;
     private Button buttonSelectWakeTime;
     private Button buttonSaveChild;
+    private ImageButton buttonBack;
     
     private int sleepHour = 21; // Varsayılan uyku saati
     private int sleepMinute = 0;
@@ -43,6 +45,11 @@ public class AddChildActivity extends AppCompatActivity {
     
     private DatabaseHelper databaseHelper;
     private Calendar selectedDate;
+    private Calendar birthDate;
+    private Calendar sleepTime;
+    private Calendar wakeTime;
+    private SimpleDateFormat dateFormat;
+    private SimpleDateFormat timeFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +64,8 @@ public class AddChildActivity extends AppCompatActivity {
         }
 
         // Geri tuşu
-        findViewById(R.id.buttonBack).setOnClickListener(v -> onBackPressed());
+        buttonBack = findViewById(R.id.buttonBack);
+        buttonBack.setOnClickListener(v -> onBackPressed());
 
         try {
             Log.d(TAG, "Initializing views...");
@@ -87,6 +95,11 @@ public class AddChildActivity extends AppCompatActivity {
         
         databaseHelper = new DatabaseHelper(this);
         selectedDate = Calendar.getInstance();
+        birthDate = Calendar.getInstance();
+        sleepTime = Calendar.getInstance();
+        wakeTime = Calendar.getInstance();
+        dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
         Log.d(TAG, "Views initialized successfully");
 
         // Cinsiyet seçeneklerini ayarla
@@ -112,36 +125,10 @@ public class AddChildActivity extends AppCompatActivity {
     
     private void setupTimeButtons() {
         // Uyku saati seçimi
-        buttonSelectSleepTime.setOnClickListener(v -> {
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                this,
-                (view, hourOfDay, minute) -> {
-                    sleepHour = hourOfDay;
-                    sleepMinute = minute;
-                    buttonSelectSleepTime.setText(String.format("Uyku: %02d:%02d", sleepHour, sleepMinute));
-                },
-                sleepHour,
-                sleepMinute,
-                true
-            );
-            timePickerDialog.show();
-        });
+        buttonSelectSleepTime.setOnClickListener(v -> showTimePicker(true));
         
         // Uyanma saati seçimi
-        buttonSelectWakeTime.setOnClickListener(v -> {
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                this,
-                (view, hourOfDay, minute) -> {
-                    wakeHour = hourOfDay;
-                    wakeMinute = minute;
-                    buttonSelectWakeTime.setText(String.format("Uyanma: %02d:%02d", wakeHour, wakeMinute));
-                },
-                wakeHour,
-                wakeMinute,
-                true
-            );
-            timePickerDialog.show();
-        });
+        buttonSelectWakeTime.setOnClickListener(v -> showTimePicker(false));
         
         // Varsayılan değerleri göster
         buttonSelectSleepTime.setText(String.format("Uyku: %02d:%02d", sleepHour, sleepMinute));
@@ -205,15 +192,31 @@ public class AddChildActivity extends AppCompatActivity {
         DatePickerDialog datePickerDialog = new DatePickerDialog(
             this,
             (view, year, month, dayOfMonth) -> {
-                selectedDate.set(year, month, dayOfMonth);
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                editTextBirthDate.setText(sdf.format(selectedDate.getTime()));
+                birthDate.set(year, month, dayOfMonth);
+                editTextBirthDate.setText(dateFormat.format(birthDate.getTime()));
             },
-            selectedDate.get(Calendar.YEAR),
-            selectedDate.get(Calendar.MONTH),
-            selectedDate.get(Calendar.DAY_OF_MONTH)
+            birthDate.get(Calendar.YEAR),
+            birthDate.get(Calendar.MONTH),
+            birthDate.get(Calendar.DAY_OF_MONTH)
         );
         datePickerDialog.show();
+    }
+
+    private void showTimePicker(boolean isSleepTime) {
+        Calendar calendar = isSleepTime ? sleepTime : wakeTime;
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                this,
+                (view, hourOfDay, minute) -> {
+                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    calendar.set(Calendar.MINUTE, minute);
+                    Button button = isSleepTime ? buttonSelectSleepTime : buttonSelectWakeTime;
+                    button.setText(timeFormat.format(calendar.getTime()));
+                },
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+        );
+        timePickerDialog.show();
     }
 
     private void saveChild() {
@@ -228,11 +231,24 @@ public class AddChildActivity extends AppCompatActivity {
 
         Child child = new Child();
         child.setName(name);
-        child.setBirthDate(selectedDate.getTimeInMillis());
+        child.setBirthDate(birthDate.getTimeInMillis());
         child.setGender(gender);
+        child.setSleepHour(sleepTime.get(Calendar.HOUR_OF_DAY));
+        child.setSleepMinute(sleepTime.get(Calendar.MINUTE));
+        child.setWakeHour(wakeTime.get(Calendar.HOUR_OF_DAY));
+        child.setWakeMinute(wakeTime.get(Calendar.MINUTE));
 
-        long result = databaseHelper.addChild(child);
-        if (result != -1) {
+        boolean inserted = databaseHelper.addChild(
+                child.getName(),
+                child.getBirthDate(),
+                child.getGender(),
+                child.getSleepHour(),
+                child.getSleepMinute(),
+                child.getWakeHour(),
+                child.getWakeMinute()
+        );
+
+        if (inserted) {
             Toast.makeText(this, "Çocuk başarıyla eklendi", Toast.LENGTH_SHORT).show();
             finish();
         } else {
