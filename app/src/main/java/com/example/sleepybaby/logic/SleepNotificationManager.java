@@ -19,12 +19,12 @@ public class SleepNotificationManager {
     private static final int NOTIFICATION_ID = 1;
     
     private Context context;
-    private android.app.NotificationManager notificationManager;
+    private NotificationManager notificationManager;
     private AlarmManager alarmManager;
     
     public SleepNotificationManager(Context context) {
         this.context = context;
-        this.notificationManager = (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        this.notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         this.alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         createNotificationChannel();
     }
@@ -34,7 +34,7 @@ public class SleepNotificationManager {
             NotificationChannel channel = new NotificationChannel(
                 CHANNEL_ID,
                 "SleepyBaby Notifications",
-                android.app.NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_DEFAULT
             );
             channel.setDescription("Uyku takibi bildirimleri");
             notificationManager.createNotificationChannel(channel);

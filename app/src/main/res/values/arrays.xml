@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="alarm_sounds">
+        <item>Gentle Alarm</item>
+        <item>Classic Alarm</item>
+        <item>Bird Chirping</item>
+        <item>Soft Music</item>
+    </string-array>
+</resources>

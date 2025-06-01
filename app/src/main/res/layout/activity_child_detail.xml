@@ -1,4 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
+<<<<<<< HEAD
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- Üst Bar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="4dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+
+            <ImageButton
+                android:id="@+id/buttonBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_back"
+                android:contentDescription="Geri"
+                app:tint="@color/black"/>
+
+            <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginStart="16dp"
+                android:layout_gravity="center_vertical"/>
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+=======
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,6 +55,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+>>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -15,11 +63,18 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+<<<<<<< HEAD
+            <!-- Çocuk Bilgileri Kartı -->
+=======
             <!-- Çocuk Bilgileri -->
+>>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+<<<<<<< HEAD
+                app:cardCornerRadius="12dp"
+=======
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp">
 
@@ -58,6 +113,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="8dp"
+>>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
                 app:cardElevation="4dp">
 
                 <LinearLayout
@@ -69,6 +125,34 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+<<<<<<< HEAD
+                        android:text="Çocuk Bilgileri"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="16dp"/>
+
+                    <TextView
+                        android:id="@+id/textViewAge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="@color/gray"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:id="@+id/textViewGender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="@color/gray"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Uyku Zamanları Kartı -->
+=======
                         android:text="Önerilen Uyku Saatleri"
                         android:textSize="18sp"
                         android:textStyle="bold"/>
@@ -83,11 +167,60 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Uyku İstatistikleri -->
+>>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+<<<<<<< HEAD
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uyku Zamanları"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="16dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonSetSleepTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Uyku Saatini Ayarla"
+                        android:textSize="16sp"
+                        android:layout_marginBottom="8dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/buttonSetWakeTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Uyanma Saatini Ayarla"
+                        android:textSize="16sp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Uyku İstatistikleri Kartı -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+=======
                 app:cardCornerRadius="8dp"
+>>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
                 app:cardElevation="4dp">
 
                 <LinearLayout
@@ -101,6 +234,36 @@
                         android:layout_height="wrap_content"
                         android:text="Uyku İstatistikleri"
                         android:textSize="18sp"
+<<<<<<< HEAD
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="16dp"/>
+
+                    <TextView
+                        android:id="@+id/textViewAverageSleep"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="@color/gray"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:id="@+id/textViewSleepQuality"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="@color/gray"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Uyku Geçmişi Kartı -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+=======
                         android:textStyle="bold"/>
 
                     <TextView
@@ -124,6 +287,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="8dp"
+>>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
                 app:cardElevation="4dp">
 
                 <LinearLayout
@@ -137,16 +301,33 @@
                         android:layout_height="wrap_content"
                         android:text="Uyku Geçmişi"
                         android:textSize="18sp"
+<<<<<<< HEAD
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="16dp"/>
+=======
                         android:textStyle="bold"/>
+>>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerViewSleepHistory"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+<<<<<<< HEAD
+                        android:nestedScrollingEnabled="false"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+=======
                         android:layout_marginTop="8dp"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
+>>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -155,7 +336,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+<<<<<<< HEAD
+        android:src="@drawable/ic_add"
+        android:contentDescription="Uyku kaydı ekle"
+        app:fabSize="normal"
+        app:tint="@color/white"
+        android:backgroundTint="@color/primary"/>
+=======
         android:src="@android:drawable/ic_menu_add"
         android:contentDescription="Uyku kaydı ekle"/>
+>>>>>>> 6e695ca8767f06ba99c25e08ff66d35e40b9575d
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout> 
