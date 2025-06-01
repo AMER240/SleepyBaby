@@ -50,13 +50,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
-            <!-- Çocuk Bilgileri Kartı -->
+
             <!-- Çocuk Bilgileri Kartı -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp">
 
@@ -198,9 +197,6 @@
                         android:layout_height="wrap_content"
                         android:text="Uyku Geçmişi"
                         android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"
-                        android:layout_marginBottom="16dp"/>
                         android:textStyle="bold"
                         android:textColor="@color/black"
                         android:layout_marginBottom="16dp"/>
