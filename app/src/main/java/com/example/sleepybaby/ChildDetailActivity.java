@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import com.bumptech.glide.Glide;
 
 public class ChildDetailActivity extends AppCompatActivity {
     private static final String TAG = "ChildDetailActivity";
@@ -177,13 +178,13 @@ public class ChildDetailActivity extends AppCompatActivity {
             textViewTitle.setText(child.getName());
             textViewAge.setText(child.getAge() + " yaşında");
             textViewGender.setText(child.getGender());
-            // Fotoğrafı güvenli şekilde göster
+            // Fotoğrafı Glide ile hızlı ve güvenli göster
             if (child.getPhotoUri() != null && !child.getPhotoUri().isEmpty()) {
-                try {
-                    imageViewChildPhoto.setImageURI(Uri.parse(child.getPhotoUri()));
-                } catch (Exception e) {
-                    imageViewChildPhoto.setImageResource(R.drawable.ic_add);
-                }
+                Glide.with(this)
+                    .load(child.getPhotoUri())
+                    .placeholder(R.drawable.ic_add)
+                    .error(R.drawable.ic_add)
+                    .into(imageViewChildPhoto);
             } else {
                 imageViewChildPhoto.setImageResource(R.drawable.ic_add);
             }
