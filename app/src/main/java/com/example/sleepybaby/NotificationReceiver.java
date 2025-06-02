@@ -21,7 +21,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             return;
         }
         
-        android.app.NotificationManager notificationManager = (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         
         String title;
         String content;

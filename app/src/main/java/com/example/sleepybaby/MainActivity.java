@@ -3,67 +3,60 @@ package com.example.sleepybaby;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
-import android.util.Log;
-
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.material.button.MaterialButton;
-
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
+    private RecyclerView recyclerView;
+    private ChildAdapter adapter;
+    private List<Child> childrenList;
+    private DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        try {
-            MaterialButton buttonAddChild = findViewById(R.id.buttonAddChild);
-            buttonAddChild.setOnClickListener(v -> {
-                Log.d(TAG, "Add child button clicked");
-                Intent intent = new Intent(MainActivity.this, AddChildActivity.class);
-                startActivity(intent);
-            });
-            
-            MaterialButton buttonViewChildren = findViewById(R.id.buttonViewChildren);
-            buttonViewChildren.setOnClickListener(v -> {
-                Log.d(TAG, "View children button clicked");
-                Intent intent = new Intent(MainActivity.this, ChildrenListActivity.class);
-                startActivity(intent);
-            });
-        } catch (Exception e) {
-            Log.e(TAG, "Error in onCreate: " + e.getMessage());
-            Toast.makeText(this, "Uygulama başlatılırken hata oluştu", Toast.LENGTH_LONG).show();
+        // Üst barı gizle
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
         }
+
+        dbHelper = new DatabaseHelper(this);
+        childrenList = new ArrayList<>();
+
+        recyclerView = findViewById(R.id.recyclerViewChildren);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ChildAdapter(this, childrenList, this::showChildDetails);
+        recyclerView.setAdapter(adapter);
+
+        FloatingActionButton fabAddChild = findViewById(R.id.fabAddChild);
+        fabAddChild.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AddChildActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        try {
-            Log.d(TAG, "onResume called, checking for existing children...");
-            // Veritabanında çocuk var mı kontrol et
-            DatabaseHelper db = new DatabaseHelper(this);
-            List<Child> children = db.getAllChildren();
-            Log.d(TAG, "Found " + children.size() + " children in database");
-            
-            // Geçici olarak otomatik yönlendirmeyi devre dışı bırak
-            /*
-            if (!children.isEmpty()) {
-                Log.d(TAG, "Children found, navigating to ChildrenListActivity");
-                // Çocuk varsa direkt çocuklar listesine git
-                startActivity(new Intent(this, ChildrenListActivity.class));
-                finish();
-            } else {
-                Log.d(TAG, "No children found, staying on MainActivity");
-            }
-            */
-        } catch (Exception e) {
-            Log.e(TAG, "Error in onResume: " + e.getMessage());
-            e.printStackTrace();
-            Toast.makeText(this, "Çocuklar yüklenirken hata oluştu: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+        loadChildren();
+    }
+
+    private void loadChildren() {
+        childrenList.clear();
+        childrenList.addAll(dbHelper.getAllChildren());
+        adapter.notifyDataSetChanged();
+    }
+
+    private void showChildDetails(Child child) {
+        Intent intent = new Intent(this, ChildDetailActivity.class);
+        intent.putExtra("child_id", child.getId());
+        intent.putExtra("child_name", child.getName());
+        startActivity(intent);
     }
 }

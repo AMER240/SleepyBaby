@@ -6,6 +6,7 @@ import com.example.sleepybaby.SleepStatistics;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 public class SleepCalculator {
 
@@ -47,7 +48,7 @@ public class SleepCalculator {
         // Ortalama uyku süresini hesapla
         long totalSleepMinutes = 0;
         for (SleepRecord record : recentRecords) {
-            totalSleepMinutes += record.getDurationInMinutes();
+            totalSleepMinutes += record.getDurationMinutes();
         }
         double averageSleepHours = recentRecords.isEmpty() ? 0 :
                 (double) totalSleepMinutes / (60 * recentRecords.size());
@@ -101,10 +102,10 @@ public class SleepCalculator {
         int recordCount = 0;
 
         for (SleepRecord record : records) {
-            if (record.getSleepTime().after(startOfDay) && record.getSleepTime().before(endOfDay)) {
-                long duration = record.getDurationInMinutes();
+            if (record.getStartTime().after(startOfDay) && record.getStartTime().before(endOfDay)) {
+                long duration = record.getDurationMinutes();
                 totalSleepMinutes += (int) duration;
-                totalQuality += record.getSleepQuality();
+                totalQuality += record.getQuality();
                 recordCount++;
             }
         }
@@ -131,10 +132,10 @@ public class SleepCalculator {
         int recordCount = 0;
 
         for (SleepRecord record : records) {
-            if (record.getSleepTime().after(startOfWeek) && record.getSleepTime().before(endOfWeek)) {
-                long duration = record.getDurationInMinutes();
+            if (record.getStartTime().after(startOfWeek) && record.getStartTime().before(endOfWeek)) {
+                long duration = record.getDurationMinutes();
                 totalSleepMinutes += (int) duration;
-                totalQuality += record.getSleepQuality();
+                totalQuality += record.getQuality();
                 recordCount++;
             }
         }
@@ -161,10 +162,10 @@ public class SleepCalculator {
         int recordCount = 0;
 
         for (SleepRecord record : records) {
-            if (record.getSleepTime().after(startOfMonth) && record.getSleepTime().before(endOfMonth)) {
-                long duration = record.getDurationInMinutes();
+            if (record.getStartTime().after(startOfMonth) && record.getStartTime().before(endOfMonth)) {
+                long duration = record.getDurationMinutes();
                 totalSleepMinutes += (int) duration;
-                totalQuality += record.getSleepQuality();
+                totalQuality += record.getQuality();
                 recordCount++;
             }
         }
@@ -190,5 +191,93 @@ public class SleepCalculator {
             stars.append("☆");
         }
         return stars.toString();
+    }
+
+    public double calculateAverageSleepHours(List<SleepRecord> records) {
+        if (records == null || records.isEmpty()) {
+            return 0.0;
+        }
+
+        long totalSleepMinutes = 0;
+        for (SleepRecord record : records) {
+            totalSleepMinutes += record.getDurationMinutes();
+        }
+
+        return totalSleepMinutes / (60.0 * records.size());
+    }
+
+    public double calculateSleepQuality(List<SleepRecord> records) {
+        if (records == null || records.isEmpty()) {
+            return 0.0;
+        }
+
+        double totalQuality = 0;
+        for (SleepRecord record : records) {
+            totalQuality += record.getQuality();
+        }
+
+        return totalQuality / records.size();
+    }
+
+    public List<SleepRecord> getRecordsForDay(List<SleepRecord> records, Date date) {
+        List<SleepRecord> dayRecords = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date startOfDay = calendar.getTime();
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        Date endOfDay = calendar.getTime();
+
+        for (SleepRecord record : records) {
+            if (record.getStartTime().after(startOfDay) && record.getStartTime().before(endOfDay)) {
+                dayRecords.add(record);
+            }
+        }
+
+        return dayRecords;
+    }
+
+    public List<SleepRecord> getRecordsForWeek(List<SleepRecord> records, Date date) {
+        List<SleepRecord> weekRecords = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date startOfWeek = calendar.getTime();
+        calendar.add(Calendar.WEEK_OF_YEAR, 1);
+        Date endOfWeek = calendar.getTime();
+
+        for (SleepRecord record : records) {
+            if (record.getStartTime().after(startOfWeek) && record.getStartTime().before(endOfWeek)) {
+                weekRecords.add(record);
+            }
+        }
+
+        return weekRecords;
+    }
+
+    public List<SleepRecord> getRecordsForMonth(List<SleepRecord> records, Date date) {
+        List<SleepRecord> monthRecords = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date startOfMonth = calendar.getTime();
+        calendar.add(Calendar.MONTH, 1);
+        Date endOfMonth = calendar.getTime();
+
+        for (SleepRecord record : records) {
+            if (record.getStartTime().after(startOfMonth) && record.getStartTime().before(endOfMonth)) {
+                monthRecords.add(record);
+            }
+        }
+
+        return monthRecords;
     }
 }

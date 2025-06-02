@@ -6,4 +6,8 @@
     <string name="save">Kaydet</string>
     <string name="edit">Düzenle</string>
     <string name="delete">Sil</string>
+    <string name="please_set_alarm_time">Please set alarm time first</string>
+    <string name="alarm_is_on">Alarm is ON</string>
+    <string name="failed_to_set_alarm">Failed to set alarm</string>
+    <string name="alarm_is_off">Alarm is OFF</string>
 </resources>

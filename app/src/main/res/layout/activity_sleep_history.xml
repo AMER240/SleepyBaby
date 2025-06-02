@@ -30,6 +30,7 @@
                 android:id="@+id/textViewTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Uyku Geçmişi"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
@@ -51,7 +52,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Çocuk Bilgileri Kartı -->
+            <!-- Filtreler -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -68,76 +69,51 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Çocuk Bilgileri"
+                        android:text="Filtreler"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/black"
                         android:layout_marginBottom="16dp"/>
 
-                    <TextView
-                        android:id="@+id/textViewAge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:textColor="@color/gray"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:id="@+id/textViewGender"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:textColor="@color/gray"/>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Uyku Zamanları Kartı -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Uyku Zamanları"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"
-                        android:layout_marginBottom="16dp"/>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/buttonSetSleepTime"
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:id="@+id/toggleGroupPeriod"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:text="Uyku Saatini Ayarla"
-                        android:textSize="16sp"
+                        android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+                        app:singleSelection="true"
+                        app:selectionRequired="true">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/buttonSetWakeTime"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:text="Uyanma Saatini Ayarla"
-                        android:textSize="16sp"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonWeek"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Hafta"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonMonth"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Ay"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonYear"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Yıl"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Uyku İstatistikleri Kartı -->
+            <!-- İstatistikler -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -154,79 +130,40 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Uyku İstatistikleri"
+                        android:text="İstatistikler"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/black"
                         android:layout_marginBottom="16dp"/>
-
-                    <TextView
-                        android:id="@+id/textViewRecommendedSleep"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:textSize="16sp"
-                        android:textColor="@color/black"
-                        android:padding="8dp"
-                        android:background="@drawable/rounded_background"
-                        android:elevation="2dp"/>
-
-                    <!-- Haftalık İstatistikler -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Haftalık İstatistikler"
-                        android:textStyle="bold"
-                        android:textSize="16sp"
-                        android:textColor="@color/black"
-                        android:layout_marginBottom="8dp"/>
 
                     <TextView
                         android:id="@+id/textViewAverageSleep"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="@color/gray"
-                        android:layout_marginBottom="4dp"/>
-
-                    <TextView
-                        android:id="@+id/textViewSleepQuality"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="@color/gray"
-                        android:layout_marginBottom="16dp"/>
-
-                    <!-- Aylık İstatistikler -->
-                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Aylık İstatistikler"
-                        android:textStyle="bold"
                         android:textSize="16sp"
-                        android:textColor="@color/black"
+                        android:textColor="@color/gray"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
-                        android:id="@+id/textViewMonthlyAverage"
-                        android:layout_width="match_parent"
+                        android:id="@+id/textViewSleepQuality"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:textColor="@color/gray"
-                        android:layout_marginBottom="4dp"/>
+                        android:layout_marginBottom="8dp"/>
 
                     <TextView
-                        android:id="@+id/textViewMonthlyQuality"
-                        android:layout_width="match_parent"
+                        android:id="@+id/textViewBestSleep"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:textColor="@color/gray"/>
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Uyku Geçmişi Kartı -->
+            <!-- Uyku Kayıtları -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -242,7 +179,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Uyku Geçmişi"
+                        android:text="Uyku Kayıtları"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/black"
@@ -261,17 +198,5 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddSleepRecord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_add"
-        android:contentDescription="Uyku kaydı ekle"
-        app:fabSize="normal"
-        app:tint="@color/white"
-        android:backgroundTint="@color/primary"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout> 

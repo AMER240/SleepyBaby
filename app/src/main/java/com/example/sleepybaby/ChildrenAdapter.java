@@ -1,5 +1,6 @@
 package com.example.sleepybaby;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,33 +11,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ChildViewHolder> {
-    private List<Child> childList;
-    private OnChildClickListener clickListener;
-    private OnChildDeleteListener deleteListener;
+    private List<Child> children;
+    private OnChildClickListener listener;
+    private DatabaseHelper databaseHelper;
+    private Context context;
 
     public interface OnChildClickListener {
         void onChildClick(Child child);
     }
 
-    public interface OnChildDeleteListener {
-        void onChildDelete(Child child, int position);
-    }
-
-    public ChildrenAdapter(List<Child> childList) {
-        this.childList = childList;
-    }
-
-    public void setChildList(List<Child> childList) {
-        this.childList = childList;
-        notifyDataSetChanged();
-    }
-
-    public void setOnChildClickListener(OnChildClickListener listener) {
-        this.clickListener = listener;
-    }
-
-    public void setOnChildDeleteListener(OnChildDeleteListener listener) {
-        this.deleteListener = listener;
+    public ChildrenAdapter(Context context, List<Child> children, OnChildClickListener listener) {
+        this.context = context;
+        this.children = children;
+        this.listener = listener;
+        this.databaseHelper = new DatabaseHelper(context);
     }
 
     @NonNull
@@ -49,38 +37,53 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ChildV
 
     @Override
     public void onBindViewHolder(@NonNull ChildViewHolder holder, int position) {
-        Child child = childList.get(position);
-        holder.textViewName.setText(child.getName());
-        holder.textViewAge.setText(child.getAge() + " yaşında");
-        
-        holder.itemView.setOnClickListener(v -> {
-            if (clickListener != null) {
-                clickListener.onChildClick(child);
-            }
-        });
-
-        holder.btnDelete.setOnClickListener(v -> {
-            if (deleteListener != null) {
-                deleteListener.onChildDelete(child, position);
-            }
-        });
+        Child child = children.get(position);
+        holder.bind(child);
     }
 
     @Override
     public int getItemCount() {
-        return childList != null ? childList.size() : 0;
+        return children.size();
     }
 
-    static class ChildViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewName;
-        TextView textViewAge;
-        ImageButton btnDelete;
+    public void removeChild(int position) {
+        if (position >= 0 && position < children.size()) {
+            Child child = children.get(position);
+            databaseHelper.deleteChild(child.getId());
+            children.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
 
-        ChildViewHolder(View itemView) {
+    class ChildViewHolder extends RecyclerView.ViewHolder {
+        private TextView textViewName;
+        private TextView textViewAge;
+        private ImageButton buttonDelete;
+
+        ChildViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewName = itemView.findViewById(R.id.textViewName);
             textViewAge = itemView.findViewById(R.id.textViewAge);
-            btnDelete = itemView.findViewById(R.id.btnDelete);
+            buttonDelete = itemView.findViewById(R.id.buttonDelete);
+
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    listener.onChildClick(children.get(position));
+                }
+            });
+
+            buttonDelete.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    removeChild(position);
+                }
+            });
+        }
+
+        void bind(Child child) {
+            textViewName.setText(child.getName());
+            textViewAge.setText(child.getAge() + " yaşında");
         }
     }
 }

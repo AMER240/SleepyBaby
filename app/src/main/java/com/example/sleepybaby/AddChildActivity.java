@@ -1,33 +1,38 @@
 package com.example.sleepybaby;
 
-import android.app.TimePickerDialog;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.NumberPicker;
-import android.widget.RadioGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class AddChildActivity extends AppCompatActivity {
     private static final String TAG = "AddChildActivity";
     
-    private EditText editTextName;
-    private NumberPicker numberPickerBirthYear;
-    private RadioGroup radioGroupGender;
-    private Button buttonSelectSleepTime;
-    private Button buttonSelectWakeTime;
-    private Button buttonSaveChild;
+    private TextInputEditText editTextName;
+    private TextInputEditText editTextBirthDate;
+    private MaterialButton buttonGenderMale;
+    private MaterialButton buttonGenderFemale;
+    private MaterialButton buttonSaveChild;
+    private ImageButton buttonBack;
     
-    private int sleepHour = 21; // Varsayılan uyku saati
-    private int sleepMinute = 0;
-    private int wakeHour = 7; // Varsayılan uyanma saati
-    private int wakeMinute = 0;
+    private String selectedGender = "";
     
     private DatabaseHelper databaseHelper;
+    private Calendar selectedDate;
+    private Calendar birthDate;
+    private SimpleDateFormat dateFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +42,7 @@ public class AddChildActivity extends AppCompatActivity {
         try {
             Log.d(TAG, "Initializing views...");
             initializeViews();
-            setupNumberPicker();
-            setupTimeButtons();
+            setupGenderButtons();
             setupSaveButton();
             
         } catch (Exception e) {
@@ -50,62 +54,49 @@ public class AddChildActivity extends AppCompatActivity {
     }
     
     private void initializeViews() {
+        // Toolbar'ı ayarla
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
+        // Geri tuşu
+        buttonBack = findViewById(R.id.buttonBack);
+        buttonBack.setOnClickListener(v -> onBackPressed());
+
         editTextName = findViewById(R.id.editTextName);
-        numberPickerBirthYear = findViewById(R.id.numberPickerBirthYear);
-        radioGroupGender = findViewById(R.id.radioGroupGender);
-        buttonSelectSleepTime = findViewById(R.id.buttonSelectSleepTime);
-        buttonSelectWakeTime = findViewById(R.id.buttonSelectWakeTime);
+        editTextBirthDate = findViewById(R.id.editTextBirthDate);
+        buttonGenderMale = findViewById(R.id.buttonGenderMale);
+        buttonGenderFemale = findViewById(R.id.buttonGenderFemale);
         buttonSaveChild = findViewById(R.id.buttonSaveChild);
         
         databaseHelper = new DatabaseHelper(this);
+        selectedDate = Calendar.getInstance();
+        birthDate = Calendar.getInstance();
+        dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         Log.d(TAG, "Views initialized successfully");
+
+        // Doğum tarihi seçici
+        editTextBirthDate.setOnClickListener(v -> showDatePicker());
     }
     
-    private void setupNumberPicker() {
-        // Doğum yılı için NumberPicker ayarları
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        numberPickerBirthYear.setMinValue(currentYear - 18); // 18 yaş üstü
-        numberPickerBirthYear.setMaxValue(currentYear);
-        numberPickerBirthYear.setValue(currentYear - 2); // Varsayılan 2 yaşında
-        numberPickerBirthYear.setWrapSelectorWheel(false);
-    }
-    
-    private void setupTimeButtons() {
-        // Uyku saati seçimi
-        buttonSelectSleepTime.setOnClickListener(v -> {
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                this,
-                (view, hourOfDay, minute) -> {
-                    sleepHour = hourOfDay;
-                    sleepMinute = minute;
-                    buttonSelectSleepTime.setText(String.format("Uyku: %02d:%02d", sleepHour, sleepMinute));
-                },
-                sleepHour,
-                sleepMinute,
-                true
-            );
-            timePickerDialog.show();
+    private void setupGenderButtons() {
+        buttonGenderMale.setOnClickListener(v -> {
+            selectedGender = "Erkek";
+            buttonGenderMale.setStrokeColor(getColorStateList(R.color.primary));
+            buttonGenderMale.setTextColor(getColor(R.color.primary));
+            buttonGenderFemale.setStrokeColor(getColorStateList(R.color.gray));
+            buttonGenderFemale.setTextColor(getColor(R.color.gray));
         });
-        
-        // Uyanma saati seçimi
-        buttonSelectWakeTime.setOnClickListener(v -> {
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                this,
-                (view, hourOfDay, minute) -> {
-                    wakeHour = hourOfDay;
-                    wakeMinute = minute;
-                    buttonSelectWakeTime.setText(String.format("Uyanma: %02d:%02d", wakeHour, wakeMinute));
-                },
-                wakeHour,
-                wakeMinute,
-                true
-            );
-            timePickerDialog.show();
+
+        buttonGenderFemale.setOnClickListener(v -> {
+            selectedGender = "Kız";
+            buttonGenderFemale.setStrokeColor(getColorStateList(R.color.primary));
+            buttonGenderFemale.setTextColor(getColor(R.color.primary));
+            buttonGenderMale.setStrokeColor(getColorStateList(R.color.gray));
+            buttonGenderMale.setTextColor(getColor(R.color.gray));
         });
-        
-        // Varsayılan değerleri göster
-        buttonSelectSleepTime.setText(String.format("Uyku: %02d:%02d", sleepHour, sleepMinute));
-        buttonSelectWakeTime.setText(String.format("Uyanma: %02d:%02d", wakeHour, wakeMinute));
     }
     
     private void setupSaveButton() {
@@ -121,26 +112,38 @@ public class AddChildActivity extends AppCompatActivity {
                     return;
                 }
                 
-                // Doğum yılı
-                long birthYear = numberPickerBirthYear.getValue();
+                // Doğum tarihi
+                String birthDateStr = editTextBirthDate.getText().toString().trim();
+                if (birthDateStr.isEmpty()) {
+                    Toast.makeText(this, "Doğum tarihi gerekli", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 
                 // Cinsiyet kontrolü
-                int selectedGenderId = radioGroupGender.getCheckedRadioButtonId();
-                if (selectedGenderId == -1) {
+                if (selectedGender.isEmpty()) {
                     Toast.makeText(this, "Lütfen cinsiyet seçiniz", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 
-                String gender = (selectedGenderId == R.id.radioButtonMale) ? "Erkek" : "Kız";
+                Log.d(TAG, "Input values - Name: " + name + ", BirthDate: " + birthDateStr + 
+                      ", Gender: " + selectedGender);
                 
-                Log.d(TAG, "Input values - Name: " + name + ", BirthYear: " + birthYear + 
-                      ", Gender: " + gender + ", Sleep: " + sleepHour + ":" + sleepMinute + 
-                      ", Wake: " + wakeHour + ":" + wakeMinute);
+                // String tarihi Date'e çevir
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                Date birthDate = sdf.parse(birthDateStr);
                 
                 // Veritabanına kaydet
                 Log.d(TAG, "Attempting to add child to database...");
-                boolean inserted = databaseHelper.addChild(name, birthYear, gender, 
-                                                          sleepHour, sleepMinute, wakeHour, wakeMinute);
+                long birthDateMillis = birthDate.getTime();
+                boolean inserted = databaseHelper.addChild(
+                    name,
+                    birthDateMillis,
+                    selectedGender,
+                    21, // Varsayılan uyku saati
+                    0,  // Varsayılan uyku dakikası
+                    7,  // Varsayılan uyanma saati
+                    0   // Varsayılan uyanma dakikası
+                );
                 
                 if (inserted) {
                     Log.d(TAG, "Child added successfully");
@@ -157,5 +160,19 @@ public class AddChildActivity extends AppCompatActivity {
                 Toast.makeText(this, "Bir hata oluştu: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void showDatePicker() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+            this,
+            (view, year, month, dayOfMonth) -> {
+                birthDate.set(year, month, dayOfMonth);
+                editTextBirthDate.setText(dateFormat.format(birthDate.getTime()));
+            },
+            birthDate.get(Calendar.YEAR),
+            birthDate.get(Calendar.MONTH),
+            birthDate.get(Calendar.DAY_OF_MONTH)
+        );
+        datePickerDialog.show();
     }
 }
