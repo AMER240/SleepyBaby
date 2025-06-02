@@ -444,12 +444,10 @@ public class ChildDetailActivity extends AppCompatActivity {
     private void showSleepQualityDialog() {
         try {
             Log.d(TAG, "Showing sleep quality dialog");
-            
-            // Create dialog on UI thread
+
             runOnUiThread(() -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(ChildDetailActivity.this);
                 builder.setTitle("Uyku Kalitesi");
-                builder.setMessage("Lütfen uyku kalitesini değerlendirin");
 
                 final String[] qualities = {"1 - Çok Kötü", "2 - Kötü", "3 - Orta", "4 - İyi", "5 - Çok İyi"};
                 final int[] selectedQuality = {3}; // Default to "Orta"
@@ -470,6 +468,10 @@ public class ChildDetailActivity extends AppCompatActivity {
                 });
 
                 AlertDialog dialog = builder.create();
+                dialog.setOnShowListener(dialogInterface -> {
+                    Log.d(TAG, "Dialog shown, setting default selection");
+                    dialog.getListView().setItemChecked(2, true); // Set "Orta" as default
+                });
                 dialog.show();
                 Log.d(TAG, "Sleep quality dialog shown");
             });
