@@ -556,8 +556,18 @@ public class ChildDetailActivity extends AppCompatActivity {
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        input.setMinLines(3);
+        input.setMinLines(1);
+        input.setMaxLines(3);
+        input.setSingleLine(false);
         input.setGravity(Gravity.TOP | Gravity.START);
+        input.setHint("Not ekleyin...");
+        input.setBackgroundResource(android.R.drawable.edit_text);
+        input.setPadding(32, 24, 32, 24);
+        input.setLayoutParams(new android.widget.LinearLayout.LayoutParams(
+            android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+            android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+
         builder.setView(input);
 
         builder.setPositiveButton("Kaydet", (dialog, which) -> {
