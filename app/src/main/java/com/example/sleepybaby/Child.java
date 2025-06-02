@@ -11,6 +11,7 @@ public class Child {
     private int sleepMinute;
     private int wakeHour;
     private int wakeMinute;
+    private String photoUri;
 
     // Boş constructor
     public Child() {
@@ -82,6 +83,12 @@ public class Child {
     }
     public void setWakeMinute(int wakeMinute) {
         this.wakeMinute = wakeMinute;
+    }
+    public String getPhotoUri() {
+        return photoUri;
+    }
+    public void setPhotoUri(String photoUri) {
+        this.photoUri = photoUri;
     }
 
     public int getAge() {

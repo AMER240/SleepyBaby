@@ -31,6 +31,12 @@ import android.app.AlertDialog;
 import android.text.InputType;
 import android.view.Gravity;
 import android.widget.EditText;
+import android.net.Uri;
+import android.widget.ImageView;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class ChildDetailActivity extends AppCompatActivity {
     private static final String TAG = "ChildDetailActivity";
@@ -50,6 +56,10 @@ public class ChildDetailActivity extends AppCompatActivity {
     private MaterialButton buttonSetSleepTime;
     private MaterialButton buttonSetWakeTime;
     private FloatingActionButton fabAddSleepRecord;
+    private ImageView imageViewChildPhoto;
+    private MaterialButton buttonChangePhoto;
+    private String selectedPhotoUri = null;
+    private static final int REQUEST_SELECT_PHOTO = 102;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,6 +166,9 @@ public class ChildDetailActivity extends AppCompatActivity {
         buttonSetWakeTime = findViewById(R.id.buttonSetWakeTime);
         recyclerViewSleepHistory = findViewById(R.id.recyclerViewSleepHistory);
         fabAddSleepRecord = findViewById(R.id.fabAddSleepRecord);
+        imageViewChildPhoto = findViewById(R.id.imageViewChildPhoto);
+        buttonChangePhoto = findViewById(R.id.buttonChangePhoto);
+        buttonChangePhoto.setOnClickListener(v -> openGalleryForPhoto());
     }
 
     private void loadChildDetails() {
@@ -164,6 +177,16 @@ public class ChildDetailActivity extends AppCompatActivity {
             textViewTitle.setText(child.getName());
             textViewAge.setText(child.getAge() + " yaşında");
             textViewGender.setText(child.getGender());
+            // Fotoğrafı güvenli şekilde göster
+            if (child.getPhotoUri() != null && !child.getPhotoUri().isEmpty()) {
+                try {
+                    imageViewChildPhoto.setImageURI(Uri.parse(child.getPhotoUri()));
+                } catch (Exception e) {
+                    imageViewChildPhoto.setImageResource(R.drawable.ic_add);
+                }
+            } else {
+                imageViewChildPhoto.setImageResource(R.drawable.ic_add);
+            }
 
             // Yaşa göre önerilen uyku saatlerini göster
             String recommendedSleep = getRecommendedSleepHours(child.getAge());
@@ -451,6 +474,32 @@ public class ChildDetailActivity extends AppCompatActivity {
         if (requestCode == 1 && resultCode == RESULT_OK) {
             // Uyku kaydı eklendiğinde detayları yenile
             loadChildDetails();
+        } else if (requestCode == REQUEST_SELECT_PHOTO && resultCode == RESULT_OK && data != null) {
+            Uri imageUri = data.getData();
+            if (imageUri != null) {
+                try {
+                    // Fotoğrafı uygulamanın cache dizinine kopyala
+                    InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                    File file = new File(getCacheDir(), "child_photo_" + System.currentTimeMillis() + ".jpg");
+                    OutputStream outputStream = new FileOutputStream(file);
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                    inputStream.close();
+                    outputStream.close();
+                    selectedPhotoUri = Uri.fromFile(file).toString();
+                    imageViewChildPhoto.setImageURI(Uri.fromFile(file));
+                    // Veritabanında güncelle
+                    child.setPhotoUri(selectedPhotoUri);
+                    databaseHelper.updateChild(child);
+                    Toast.makeText(this, "Fotoğraf güncellendi", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Fotoğraf yüklenemedi", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 
@@ -552,5 +601,11 @@ public class ChildDetailActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Uyku kaydı eklenirken hata oluştu", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void openGalleryForPhoto() {
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_SELECT_PHOTO);
     }
 } 

@@ -1,10 +1,14 @@
 package com.example.sleepybaby;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.util.Log;
 
@@ -16,6 +20,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class AddChildActivity extends AppCompatActivity {
     private static final String TAG = "AddChildActivity";
@@ -26,8 +34,11 @@ public class AddChildActivity extends AppCompatActivity {
     private MaterialButton buttonGenderFemale;
     private MaterialButton buttonSaveChild;
     private ImageButton buttonBack;
-    
+    private ImageView imageViewPhoto;
+    private MaterialButton buttonSelectPhoto;
     private String selectedGender = "";
+    private String selectedPhotoUri = null;
+    private static final int REQUEST_SELECT_PHOTO = 101;
     
     private DatabaseHelper databaseHelper;
     private Calendar selectedDate;
@@ -70,6 +81,8 @@ public class AddChildActivity extends AppCompatActivity {
         buttonGenderMale = findViewById(R.id.buttonGenderMale);
         buttonGenderFemale = findViewById(R.id.buttonGenderFemale);
         buttonSaveChild = findViewById(R.id.buttonSaveChild);
+        imageViewPhoto = findViewById(R.id.imageViewPhoto);
+        buttonSelectPhoto = findViewById(R.id.buttonSelectPhoto);
         
         databaseHelper = new DatabaseHelper(this);
         selectedDate = Calendar.getInstance();
@@ -79,6 +92,7 @@ public class AddChildActivity extends AppCompatActivity {
 
         // Doğum tarihi seçici
         editTextBirthDate.setOnClickListener(v -> showDatePicker());
+        buttonSelectPhoto.setOnClickListener(v -> openGallery());
     }
     
     private void setupGenderButtons() {
@@ -142,7 +156,8 @@ public class AddChildActivity extends AppCompatActivity {
                     21, // Varsayılan uyku saati
                     0,  // Varsayılan uyku dakikası
                     7,  // Varsayılan uyanma saati
-                    0   // Varsayılan uyanma dakikası
+                    0,  // Varsayılan uyanma dakikası
+                    selectedPhotoUri // Fotoğraf URI
                 );
                 
                 if (inserted) {
@@ -174,5 +189,39 @@ public class AddChildActivity extends AppCompatActivity {
             birthDate.get(Calendar.DAY_OF_MONTH)
         );
         datePickerDialog.show();
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_SELECT_PHOTO);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_SELECT_PHOTO && resultCode == RESULT_OK && data != null) {
+            Uri imageUri = data.getData();
+            if (imageUri != null) {
+                try {
+                    // Fotoğrafı uygulamanın cache dizinine kopyala
+                    InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                    File file = new File(getCacheDir(), "child_photo_" + System.currentTimeMillis() + ".jpg");
+                    OutputStream outputStream = new FileOutputStream(file);
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                    inputStream.close();
+                    outputStream.close();
+                    selectedPhotoUri = Uri.fromFile(file).toString();
+                    imageViewPhoto.setImageURI(Uri.fromFile(file));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Fotoğraf yüklenemedi", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 }

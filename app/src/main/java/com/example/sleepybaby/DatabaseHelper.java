@@ -16,7 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
     private static final String DATABASE_NAME = "sleepyBaby.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     public static final String TABLE_CHILDREN = "children";
     public static final String TABLE_SLEEP_RECORDS = "sleep_records";
@@ -30,6 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_SLEEP_MINUTE = "sleep_minute";
     public static final String COLUMN_WAKE_HOUR = "wake_hour";
     public static final String COLUMN_WAKE_MINUTE = "wake_minute";
+    public static final String COLUMN_PHOTO_URI = "photo_uri";
     
     // SleepRecord tablosu için kolonlar
     public static final String COLUMN_CHILD_ID = "childId";
@@ -71,7 +72,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_SLEEP_HOUR + " INTEGER NOT NULL," +
                 COLUMN_SLEEP_MINUTE + " INTEGER NOT NULL," +
                 COLUMN_WAKE_HOUR + " INTEGER NOT NULL," +
-                COLUMN_WAKE_MINUTE + " INTEGER NOT NULL)");
+                COLUMN_WAKE_MINUTE + " INTEGER NOT NULL," +
+                COLUMN_PHOTO_URI + " TEXT" +
+                ")");
 
         // Uyku kayıtları tablosu
         db.execSQL(CREATE_SLEEP_RECORDS_TABLE);
@@ -90,7 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Çocuk ekleme
-    public boolean addChild(String name, long birthDate, String gender, int sleepHour, int sleepMinute, int wakeHour, int wakeMinute) {
+    public boolean addChild(String name, long birthDate, String gender, int sleepHour, int sleepMinute, int wakeHour, int wakeMinute, String photoUri) {
         SQLiteDatabase db = null;
         try {
             Log.d(TAG, "Starting addChild method...");
@@ -108,6 +111,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_SLEEP_MINUTE, sleepMinute);
             values.put(COLUMN_WAKE_HOUR, wakeHour);
             values.put(COLUMN_WAKE_MINUTE, wakeMinute);
+            values.put(COLUMN_PHOTO_URI, photoUri);
             
             Log.d(TAG, "ContentValues created: " + values.toString());
             
@@ -160,6 +164,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         child.setSleepMinute(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SLEEP_MINUTE)));
                         child.setWakeHour(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_WAKE_HOUR)));
                         child.setWakeMinute(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_WAKE_MINUTE)));
+                        int photoUriIndex = cursor.getColumnIndex(COLUMN_PHOTO_URI);
+                        if (photoUriIndex != -1) {
+                            child.setPhotoUri(cursor.getString(photoUriIndex));
+                        }
                         childList.add(child);
                         Log.d(TAG, "Child added: " + child.getName() + " (ID: " + child.getId() + ")");
                     } catch (Exception e) {
@@ -350,6 +358,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             child.setSleepMinute(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SLEEP_MINUTE)));
             child.setWakeHour(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_WAKE_HOUR)));
             child.setWakeMinute(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_WAKE_MINUTE)));
+            int photoUriIndex = cursor.getColumnIndex(COLUMN_PHOTO_URI);
+            if (photoUriIndex != -1) {
+                child.setPhotoUri(cursor.getString(photoUriIndex));
+            }
         }
         cursor.close();
         return child;
@@ -366,9 +378,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_SLEEP_MINUTE, child.getSleepMinute());
         values.put(COLUMN_WAKE_HOUR, child.getWakeHour());
         values.put(COLUMN_WAKE_MINUTE, child.getWakeMinute());
-
+        values.put(COLUMN_PHOTO_URI, child.getPhotoUri());
         int result = db.update(TABLE_CHILDREN, values, COLUMN_ID + "=?",
                 new String[]{String.valueOf(child.getId())});
+        db.close();
         return result > 0;
     }
 
