@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.text.ParseException;
+import android.app.AlertDialog;
+import android.widget.Toast;
 
 public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHolder> {
     private List<Child> children;
@@ -80,7 +82,16 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildViewHol
             buttonDelete.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
-                    removeChild(position);
+                    // Onay dialogu göster
+                    new AlertDialog.Builder(context)
+                        .setTitle("Çocuğu Sil")
+                        .setMessage("Bu çocuğu silmek istediğinize emin misiniz?")
+                        .setPositiveButton("Evet", (dialog, which) -> {
+                            removeChild(position);
+                            Toast.makeText(context, "Çocuk silindi", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("Hayır", null)
+                        .show();
                 }
             });
         }
