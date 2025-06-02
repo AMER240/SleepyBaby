@@ -475,4 +475,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return records;
     }
+
+    // Uyku kaydı silme
+    public int deleteSleepRecord(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int deletedRows = db.delete(TABLE_SLEEP_RECORDS, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        db.close();
+        return deletedRows;
+    }
 }

@@ -120,8 +120,8 @@ public class ChildDetailActivity extends AppCompatActivity {
 
             // Uyku geçmişini yükle
             recyclerViewSleepHistory.setLayoutManager(new LinearLayoutManager(this));
-            sleepHistoryAdapter = new SleepHistoryAdapter(this, new ArrayList<>());
-            recyclerViewSleepHistory.setAdapter(sleepHistoryAdapter);
+            // sleepHistoryAdapter = new SleepHistoryAdapter(this, new ArrayList<>());
+            // recyclerViewSleepHistory.setAdapter(sleepHistoryAdapter);
             loadSleepHistory();
 
             // Uyku kaydı ekleme butonu
@@ -399,9 +399,29 @@ public class ChildDetailActivity extends AppCompatActivity {
     private void loadSleepHistory() {
         try {
             List<SleepRecord> records = databaseHelper.getSleepRecords(childId);
-            sleepHistoryAdapter = new SleepHistoryAdapter(this, records);
-            recyclerViewSleepHistory.setAdapter(sleepHistoryAdapter);
-            recyclerViewSleepHistory.setLayoutManager(new LinearLayoutManager(this));
+            if (sleepHistoryAdapter == null) {
+                sleepHistoryAdapter = new SleepHistoryAdapter(this, records);
+                recyclerViewSleepHistory.setAdapter(sleepHistoryAdapter);
+                // Silme callback'i burada bir kez bağlanmalı
+                sleepHistoryAdapter.setOnSleepRecordDeleteListener(record -> {
+                    new AlertDialog.Builder(ChildDetailActivity.this)
+                        .setTitle("Kaydı Sil")
+                        .setMessage("Bu uyku kaydını silmek istediğinize emin misiniz?")
+                        .setPositiveButton("Evet", (dialog, which) -> {
+                            int deleted = databaseHelper.deleteSleepRecord(record.getId());
+                            if (deleted > 0) {
+                                Toast.makeText(ChildDetailActivity.this, "Kayıt silindi", Toast.LENGTH_SHORT).show();
+                                loadSleepHistory();
+                            } else {
+                                Toast.makeText(ChildDetailActivity.this, "Kayıt silinemedi", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Hayır", null)
+                        .show();
+                });
+            } else {
+                sleepHistoryAdapter.updateSleepRecords(records);
+            }
         } catch (Exception e) {
             Log.e(TAG, "Error in loadSleepHistory: " + e.getMessage());
             e.printStackTrace();

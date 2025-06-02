@@ -16,6 +16,15 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
     private Context context;
     private SimpleDateFormat dateFormat;
     private SimpleDateFormat timeFormat;
+    private OnSleepRecordDeleteListener deleteListener;
+
+    public interface OnSleepRecordDeleteListener {
+        void onDelete(SleepRecord record);
+    }
+
+    public void setOnSleepRecordDeleteListener(OnSleepRecordDeleteListener listener) {
+        this.deleteListener = listener;
+    }
 
     public SleepHistoryAdapter(Context context, List<SleepRecord> sleepRecords) {
         this.context = context;
@@ -82,6 +91,13 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
         } else {
             holder.textViewNotes.setVisibility(View.GONE);
         }
+
+        // Delete button
+        holder.buttonDelete.setOnClickListener(v -> {
+            if (deleteListener != null) {
+                deleteListener.onDelete(record);
+            }
+        });
     }
 
     @Override
@@ -101,6 +117,7 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
         TextView textViewQuality;
         TextView textViewDuration;
         TextView textViewNotes;
+        android.widget.ImageButton buttonDelete;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -110,6 +127,7 @@ public class SleepHistoryAdapter extends RecyclerView.Adapter<SleepHistoryAdapte
             textViewQuality = itemView.findViewById(R.id.textViewQuality);
             textViewDuration = itemView.findViewById(R.id.textViewDuration);
             textViewNotes = itemView.findViewById(R.id.textViewNotes);
+            buttonDelete = itemView.findViewById(R.id.buttonDelete);
         }
     }
 } 
