@@ -27,6 +27,10 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.app.AlertDialog;
+import android.text.InputType;
+import android.view.Gravity;
+import android.widget.EditText;
 
 public class ChildDetailActivity extends AppCompatActivity {
     private static final String TAG = "ChildDetailActivity";
@@ -53,6 +57,8 @@ public class ChildDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_child_detail);
 
         try {
+            Log.d(TAG, "ChildDetailActivity onCreate started");
+            
             // Bildirim izinlerini kontrol et
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) 
@@ -77,14 +83,28 @@ public class ChildDetailActivity extends AppCompatActivity {
             // Intent'ten verileri al
             childId = getIntent().getIntExtra("child_id", -1);
             if (childId == -1) {
+                Log.e(TAG, "Invalid child ID");
                 Toast.makeText(this, "Geçersiz çocuk ID'si", Toast.LENGTH_SHORT).show();
                 finish();
                 return;
             }
+            Log.d(TAG, "Child ID: " + childId);
+
+            // Initialize database helper
+            databaseHelper = new DatabaseHelper(this);
+            
+            // Get child details
+            child = databaseHelper.getChild(childId);
+            if (child == null) {
+                Log.e(TAG, "Child not found for ID: " + childId);
+                Toast.makeText(this, "Çocuk bulunamadı", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
+            Log.d(TAG, "Child found: " + child.getName());
 
             // View'ları initialize et
             initializeViews();
-            databaseHelper = new DatabaseHelper(this);
 
             // Çocuk bilgilerini yükle
             loadChildDetails();
@@ -106,6 +126,14 @@ public class ChildDetailActivity extends AppCompatActivity {
 
             // Uyku kaydı ekleme butonu
             fabAddSleepRecord.setOnClickListener(v -> startAddSleepRecordActivity());
+
+            // Check if we should show sleep quality dialog
+            String action = getIntent().getAction();
+            Log.d(TAG, "Activity created with action: " + action);
+            if ("com.example.sleepybaby.SHOW_SLEEP_QUALITY".equals(action)) {
+                Log.d(TAG, "Showing sleep quality dialog for child: " + child.getName());
+                showSleepQualityDialog();
+            }
 
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreate: " + e.getMessage());
@@ -242,14 +270,6 @@ public class ChildDetailActivity extends AppCompatActivity {
                     buttonSetSleepTime.setText(String.format(Locale.getDefault(), 
                         "Uyku Saati: %02d:%02d", hourOfDay, minute));
                     scheduleSleepTimeNotification(hourOfDay, minute);
-                    
-                    // Uyku kaydı ekle
-                    SleepRecord record = new SleepRecord();
-                    record.setChildId(childId);
-                    record.setSleepTime(new Date());
-                    record.setSleepHour(hourOfDay);
-                    record.setSleepMinute(minute);
-                    databaseHelper.addSleepRecord(record);
                 } else {
                     child.setWakeHour(hourOfDay);
                     child.setWakeMinute(minute);
@@ -258,7 +278,6 @@ public class ChildDetailActivity extends AppCompatActivity {
                     scheduleWakeTimeNotification(hourOfDay, minute);
                 }
                 databaseHelper.updateChild(child);
-                loadSleepHistory(); // Uyku geçmişini güncelle
             },
             calendar.get(Calendar.HOUR_OF_DAY),
             calendar.get(Calendar.MINUTE),
@@ -420,5 +439,96 @@ public class ChildDetailActivity extends AppCompatActivity {
         intent.putExtra("child_id", childId);
         intent.putExtra("child_name", child.getName());
         startActivityForResult(intent, 1);
+    }
+
+    private void showSleepQualityDialog() {
+        try {
+            Log.d(TAG, "Showing sleep quality dialog");
+            
+            // Create dialog on UI thread
+            runOnUiThread(() -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Uyku Kalitesi");
+                builder.setMessage("Lütfen uyku kalitesini değerlendirin");
+
+                final String[] qualities = {"1 - Çok Kötü", "2 - Kötü", "3 - Orta", "4 - İyi", "5 - Çok İyi"};
+                final int[] selectedQuality = {3}; // Default to "Orta"
+
+                builder.setSingleChoiceItems(qualities, 2, (dialog, which) -> {
+                    selectedQuality[0] = which + 1;
+                    Log.d(TAG, "Selected quality: " + selectedQuality[0]);
+                });
+
+                builder.setPositiveButton("Tamam", (dialog, which) -> {
+                    Log.d(TAG, "Quality dialog confirmed with value: " + selectedQuality[0]);
+                    showNotesDialog(selectedQuality[0]);
+                });
+
+                builder.setNegativeButton("İptal", (dialog, which) -> {
+                    Log.d(TAG, "Quality dialog cancelled");
+                    dialog.cancel();
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                Log.d(TAG, "Sleep quality dialog shown");
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Error showing sleep quality dialog: " + e.getMessage(), e);
+            Toast.makeText(this, "Kalite seçimi gösterilirken hata oluştu", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showNotesDialog(int quality) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Notlar");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        input.setMinLines(3);
+        input.setGravity(Gravity.TOP | Gravity.START);
+        builder.setView(input);
+
+        builder.setPositiveButton("Kaydet", (dialog, which) -> {
+            String notes = input.getText().toString();
+            saveSleepRecord(quality, notes);
+        });
+
+        builder.setNegativeButton("İptal", null);
+        builder.show();
+    }
+
+    private void saveSleepRecord(int quality, String notes) {
+        Calendar sleepCalendar = Calendar.getInstance();
+        sleepCalendar.set(Calendar.HOUR_OF_DAY, child.getSleepHour());
+        sleepCalendar.set(Calendar.MINUTE, child.getSleepMinute());
+        sleepCalendar.set(Calendar.SECOND, 0);
+
+        Calendar wakeCalendar = Calendar.getInstance();
+        wakeCalendar.set(Calendar.HOUR_OF_DAY, child.getWakeHour());
+        wakeCalendar.set(Calendar.MINUTE, child.getWakeMinute());
+        wakeCalendar.set(Calendar.SECOND, 0);
+
+        if (wakeCalendar.before(sleepCalendar)) {
+            wakeCalendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        SleepRecord record = new SleepRecord();
+        record.setChildId(childId);
+        record.setSleepTime(sleepCalendar.getTime());
+        record.setSleepHour(child.getSleepHour());
+        record.setSleepMinute(child.getSleepMinute());
+        record.setWakeHour(child.getWakeHour());
+        record.setWakeMinute(child.getWakeMinute());
+        record.setQuality(quality);
+        record.setNotes(notes);
+
+        long result = databaseHelper.addSleepRecord(record);
+        if (result != -1) {
+            Toast.makeText(this, "Uyku kaydı eklendi", Toast.LENGTH_SHORT).show();
+            loadSleepHistory();
+        } else {
+            Toast.makeText(this, "Uyku kaydı eklenirken hata oluştu", Toast.LENGTH_SHORT).show();
+        }
     }
 } 

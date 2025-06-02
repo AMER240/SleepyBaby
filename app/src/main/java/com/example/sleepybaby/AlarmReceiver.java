@@ -32,12 +32,22 @@ public class AlarmReceiver extends BroadcastReceiver {
             Child child = dbHelper.getChild(childId);
             if (child == null) return;
 
-            NotificationHelper notificationHelper = new NotificationHelper(context);
-
             if (action.equals("com.example.sleepybaby.SLEEP_TIME")) {
-                notificationHelper.showSleepTimeNotification(child.getName());
+                // Sleep time notification
+                Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+                notificationIntent.setAction("com.example.sleepybaby.SLEEP_TIME");
+                notificationIntent.putExtra("child_id", childId);
+                notificationIntent.putExtra("CHILD_NAME", child.getName());
+                context.sendBroadcast(notificationIntent);
+                Log.d(TAG, "Sleep time broadcast sent for child: " + child.getName());
             } else if (action.equals("com.example.sleepybaby.WAKE_TIME")) {
-                notificationHelper.showWakeTimeNotification(child.getName());
+                // Wake time notification
+                Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+                notificationIntent.setAction("com.example.sleepybaby.WAKE_TIME");
+                notificationIntent.putExtra("child_id", childId);
+                notificationIntent.putExtra("CHILD_NAME", child.getName());
+                context.sendBroadcast(notificationIntent);
+                Log.d(TAG, "Wake time broadcast sent for child: " + child.getName());
             } else if (action.equals("com.example.sleepybaby.ALARM_TRIGGER")) {
                 Log.d(TAG, "Alarm received: " + action);
                 
